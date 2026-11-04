@@ -49,7 +49,8 @@ LOGIN_1 = (
     '<input type="submit" name="btnCheck"></form>'
 )
 LOGIN_2 = (
-    "<form>" + HIDDEN.format("v2") + '<input name="tbxBenutzername">'
+    "<form>" + HIDDEN.format("v2") + '<input type="hidden" name="hdfCheck" value="True">'
+    '<input name="tbxBenutzername">'
     '<input name="tbxKennwort"><input type="submit" name="btnLogin" value="Anmelden"></form>'
 )
 

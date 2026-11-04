@@ -162,7 +162,8 @@ class MensaMaxClient:
                     "btnCheck": "",
                 },
             )
-            if not page.has_login_button:
+            # Die Website setzt hdfCheck serverseitig, wenn das Konto gefunden wurde.
+            if page.hidden_fields.get("hdfCheck") != "True":
                 raise InvalidAccount
 
         page, final_url = await self._request(
