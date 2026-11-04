@@ -1,0 +1,40 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MensaMax-Speiseplan",
+        "description": "Trag die Daten ein, mit denen du dich auf app.mensamax.de anmeldest. Für jedes Konto legst du einen eigenen Eintrag an.",
+        "data": {
+          "name": "Name",
+          "project": "Projekt",
+          "facility": "Einrichtung",
+          "username": "Benutzername",
+          "password": "Kennwort"
+        },
+        "data_description": {
+          "name": "Bestimmt die Namen der Sensoren, z. B. sensor.mensa_heute.",
+          "project": "Steht im Portal unter „Ihr Projekt“.",
+          "facility": "Steht im Portal unter „Schule“."
+        }
+      },
+      "reauth_confirm": {
+        "title": "MensaMax neu anmelden",
+        "description": "Die Anmeldung für {username} wurde abgelehnt. Trag das aktuelle Kennwort ein.",
+        "data": {
+          "password": "Kennwort"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "MensaMax ist nicht erreichbar.",
+      "invalid_account": "Projekt, Einrichtung oder Benutzername wurden nicht angenommen.",
+      "invalid_auth": "Die Anmeldung wurde abgelehnt. Prüf das Kennwort.",
+      "plan_not_found": "Nach der Anmeldung kam kein Speiseplan zurück.",
+      "unknown": "Unerwarteter Fehler."
+    },
+    "abort": {
+      "already_configured": "Dieses Konto ist bereits eingerichtet.",
+      "reauth_successful": "Die Anmeldung wurde aktualisiert."
+    }
+  }
+}

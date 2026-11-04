@@ -1,0 +1,40 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "MensaMax menu",
+        "description": "Enter the details you use to sign in at app.mensamax.de. Add one entry per account.",
+        "data": {
+          "name": "Name",
+          "project": "Project",
+          "facility": "Facility",
+          "username": "Username",
+          "password": "Password"
+        },
+        "data_description": {
+          "name": "Determines the sensor names, e.g. sensor.mensa_heute.",
+          "project": "Shown in the portal as 'Ihr Projekt'.",
+          "facility": "Shown in the portal as 'Schule'."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in to MensaMax again",
+        "description": "The sign-in for {username} was rejected. Enter the current password.",
+        "data": {
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "MensaMax cannot be reached.",
+      "invalid_account": "Project, facility or username was not accepted.",
+      "invalid_auth": "The sign-in was rejected. Check the password.",
+      "plan_not_found": "No menu was returned after signing in.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This account is already configured.",
+      "reauth_successful": "The sign-in was updated."
+    }
+  }
+}

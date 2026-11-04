@@ -1,0 +1,493 @@
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1"><title>
+	Wochenspeiseplan
+</title><link href="../../css/style.css" type="text/css" rel="stylesheet" /><link href="../../css/datagrid.css" type="text/css" rel="stylesheet" /><link href="../../css/Dateireiter.css" type="text/css" rel="stylesheet" /><link href="../../css/terminkalender.css" type="text/css" rel="stylesheet" /><link href="../../css/rating.css" type="text/css" rel="stylesheet" />
+    <style type="text/css">
+        font#strDetails:hover {
+            color: Black;
+            font-weight: bold;
+        }
+
+        .tdHeader {
+            background-color: transparent;
+        }
+
+        #tdTextOben {
+            padding-bottom: 1em;
+        }
+
+        #lblLegende1 {
+            vertical-align: text-top;
+            margin-left: 1em;
+        }
+    </style>
+
+<meta name="selectedLanguage" content="de-de" /></head>
+<body>
+    <form name="Form1" method="post" action="PlanForm.aspx" id="Form1" style="margin-bottom: 0px;">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="ENTFERNT" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form1'];
+if (!theForm) {
+    theForm = document.Form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('Fehler beim Laden des clientseitigen ASP.NET Ajax-Frameworks.');
+//]]>
+</script>
+
+
+<script src="../../javascript/jquery/jquery-1.11.1.js" type="text/javascript"></script>
+<script src="../../javascript/BitteWarten.js" type="text/javascript"></script>
+<script src="../../javascript/functions.js" type="text/javascript"></script>
+<script src="../../javascript/MenueDetailBox.js" type="text/javascript"></script>
+<script src="../../javascript/rating.js" type="text/javascript"></script>
+<script src="../../javascript/MitteilungBox.js" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="9608D1CF" />
+	<input type="hidden" name="__SCROLLPOSITIONX" id="__SCROLLPOSITIONX" value="0" />
+	<input type="hidden" name="__SCROLLPOSITIONY" id="__SCROLLPOSITIONY" value="0" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="ENTFERNT" />
+</div>
+        <div id="divNavigation" style="width: 780px;"><table class="divNaviContainer"><tr><td style="min-width: 50px;"  class="divTab divTabActive" >Speiseplan</td></table></div>
+        <table id="MainTable" class="Outertable" style="width: 705px; margin-bottom: 0px;">
+            <tbody>
+                <tr>
+                    <td class="tdHeaderTop" colspan="2">
+                        <input type="submit" name="btnZurueck" value="&lt;" id="btnZurueck" class="button previous" style="width:25px;" />
+                        <span id="lblWoche" style="font-weight:bold;">02.11.2026 - 08.11.2026 (KW45)</span>
+                        <input type="submit" name="btnVor" value=">" id="btnVor" class="button next" style="width:25px;" />
+                    </td>
+                </tr>
+                <tr style="text-align: center">
+                    <td id="tdTextOben" align="center" colspan="2"></td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" name="btnDruckenPdf" value="Drucken" id="btnDruckenPdf" class="button" style="width:85px;" />
+                        <input type="submit" name="btnHideImage" value="Bilder ausblenden" id="btnHideImage" class="button" />
+                        <span id="lblLegende1" class="tdselected" style="display:inline-block;height:20px;width:20px;"></span>
+                        <span id="lblBereitsbestellt"> = bereits bestellt</span>
+                    </td>
+                    <td class="align-right">
+                        <span id="lblKontostand" class="label2">aktueller Kontostand: 12,34 €</span>
+                        <br />
+                        <span id="lblVorausKontostand" class="label2">Kontostand inkl. aller Bestellungen: 12,34 €</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="lblHinweis" class="hinweis"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="divCon"><table class="dataform" border="0">
+	<thead>
+		<tr class="tdHeader">
+			<th></th><th align="center">Mo, 02.11.2026</th><th align="center">Di, 03.11.2026</th><th align="center">Mi, 04.11.2026</th><th align="center">Do, 05.11.2026</th><th align="center">Fr, 06.11.2026</th>
+		</tr>
+	</thead><tbody>
+		<tr class="tdFooter no-hover">
+			<td class="menueCell" style="font-weight:bold;">Menü A</td><td id="td20261102_7492" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Kartoffeltaschen mit Kräuterfrischkäsefüllung<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Mexiko-Gemüse in Rahmsauce<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Obst</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7492&amp;Menue=Menü A&amp;PID=0&amp;MDatum=02.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7492&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261103_7494" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Ricotta-Spinat Knödel<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Eier" alt="Eier" class="zusatzstoff-allergen">e, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Rucula-Käsesauce<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Möhren-Apfelsalat</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7494&amp;Menue=Menü A&amp;PID=0&amp;MDatum=03.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7494&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261104_7496" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261104,7496, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Schnippelbohneneintopf mit viel Gemüse und Putenbrustsaftschinken (Halal)<sup class="zusatzstoffe">(<span title="Sellerie" alt="Sellerie" class="zusatzstoff-allergen">b, </span><span title="Senf" alt="Senf" class="zusatzstoff-allergen">k, </span><span title="konserviert" alt="konserviert">2, </span><span title="mit Antioxidationsmittel" alt="mit Antioxidationsmittel">3, </span><span title="mit Phosphat/en" alt="mit Phosphat/en">8</span>)</sup></li>
+  <li>Kaiserbrötchen<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1</span>)</sup></li>
+  <li>Rote Grütze</li>
+  <li>Vanillesauce<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="mit Farbstoff/en" alt="mit Farbstoff/en">1</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7496&amp;Menue=Menü A&amp;PID=0&amp;MDatum=04.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7496&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261105_7498" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261105,7498, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Asiatische Nudelpfanne mit Mi-Nudeln, Gemüse und Kokossauce<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Soja" alt="Soja" class="zusatzstoff-allergen">h, </span><span title="mit Farbstoff/en" alt="mit Farbstoff/en">1, </span><span title="E102" alt="E102">1a</span>)</sup></li>
+  <li>Tofuwürfel gebacken<sup class="zusatzstoffe">(<span title="Soja" alt="Soja" class="zusatzstoff-allergen">h</span>)</sup></li>
+  <li>Heidelbeerquark<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7498&amp;Menue=Menü A&amp;PID=0&amp;MDatum=05.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7498&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261106_7500" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261106,7500, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Matjestopf Hausfrauen Art<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="Fisch" alt="Fisch" class="zusatzstoff-allergen">j, </span><span title="Senf" alt="Senf" class="zusatzstoff-allergen">k</span>)</sup></li>
+  <li>Bio-Dampfkartoffeln</li>
+  <li>Bohnensalat</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Fisch.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7500&amp;Menue=Menü A&amp;PID=0&amp;MDatum=06.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7500&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td>
+		</tr><tr class="tdFooter no-hover">
+			<td class="menueCell" style="font-weight:bold;">Menü B</td><td id="td20261102_7227" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Gulaschsuppe (Rind)</li>
+  <li>Vollkornbrot<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Roggen" alt="Roggen" class="zusatzstoff-allergen">a2, </span><span title="Hafer" alt="Hafer" class="zusatzstoff-allergen">a4</span>)</sup></li>
+  <li>Obst</li>
+  <li>Kita: Obst/Rohkost</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Suppenteller.png" align="absmiddle" style="width:35px;border-width:0px;" /><img src="../../img/Speisen/Kuh.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7227&amp;Menue=Menü B&amp;PID=0&amp;MDatum=02.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7227&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261103_7228" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Quark-Grieß-Auflauf<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Eier" alt="Eier" class="zusatzstoff-allergen">e, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Fruchtsauce</li>
+  <li>Möhren-Apfelsalat</li>
+  <li>Kita: Obst/Rohkost</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7228&amp;Menue=Menü B&amp;PID=0&amp;MDatum=03.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7228&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261104_7229" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261104,7229, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Kartoffelpuffer<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Eier" alt="Eier" class="zusatzstoff-allergen">e</span>)</sup></li>
+  <li>Apfelmus<sup class="zusatzstoffe">(<span title="mit Antioxidationsmittel" alt="mit Antioxidationsmittel">3</span>)</sup></li>
+  <li>Rote Grütze</li>
+  <li>Vanillesauce<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="mit Farbstoff/en" alt="mit Farbstoff/en">1</span>)</sup></li>
+  <li>Kita: Obst/Rohkost</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7229&amp;Menue=Menü B&amp;PID=0&amp;MDatum=04.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7229&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261105_7230" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261105,7230, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Geflügelfrikassee mit Champignons, Spargel und Erbsen<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Bio-Langkornreis<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Heidelbeerquark<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Kita: Obst/Rohkost</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Huhn.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7230&amp;Menue=Menü B&amp;PID=0&amp;MDatum=05.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7230&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261106_7231" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261106,7231, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>BIO-Dinkel Fussili<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1</span>)</sup></li>
+  <li>Schinken-Sahnesauce (Halal/Pute)<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="konserviert" alt="konserviert">2, </span><span title="mit Antioxidationsmittel" alt="mit Antioxidationsmittel">3, </span><span title="mit Phosphat/en" alt="mit Phosphat/en">8</span>)</sup></li>
+  <li>geriebener Käse<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Bohnensalat</li>
+  <li>Kita: Obst/Rohkost</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Essen.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7231&amp;Menue=Menü B&amp;PID=0&amp;MDatum=06.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7231&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td>
+		</tr><tr class="tdFooter no-hover">
+			<td class="menueCell" style="font-weight:bold;">Menü C</td><td id="td20261102_7493" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Salatbuffet</li>
+  <li>Obazda (Camembert-Creme)<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Walnuss-Brot<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Walnüsse" alt="Walnüsse" class="zusatzstoff-allergen">g3</span>)</sup></li>
+  <li>Obst</li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Salat.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7493&amp;Menue=Menü C&amp;PID=0&amp;MDatum=02.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7493&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261103_7495" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="bereits vergangener Tag" alt="bereits vergangener Tag" colspan="3" style="cursor:url('../../img/noclick.gif'),default;"><ul>
+  <li>Salatbuffet</li>
+  <li>Pinsa mit Tomate, Mais und roten Zwiebeln<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Salat.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7495&amp;Menue=Menü C&amp;PID=0&amp;MDatum=03.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7495&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261104_7497" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261104,7497, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Salatbuffet</li>
+  <li>Pfannkuchen gefüllt mit Hirtenkäse, getrockneten Tomaten und Oliven<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Eier" alt="Eier" class="zusatzstoff-allergen">e, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="mit Antioxidationsmittel" alt="mit Antioxidationsmittel">3</span>)</sup></li>
+  <li>Rote Grütze</li>
+  <li>Vanillesauce<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="mit Farbstoff/en" alt="mit Farbstoff/en">1</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Salat.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7497&amp;Menue=Menü C&amp;PID=0&amp;MDatum=04.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7497&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261105_7499" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261105,7499, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Salatbuffet</li>
+  <li>Ofenkartoffel</li>
+  <li>Sour Cream<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+  <li>Heidelbeerquark<sup class="zusatzstoffe">(<span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Salat.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7499&amp;Menue=Menü C&amp;PID=0&amp;MDatum=05.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7499&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td><td id="td20261106_7501" class="speiseplan-menue"><table cellpadding="1" border="0" style="height:100%;width:100%;border-collapse:collapse;padding:0px;">
+				<tr class="tdFooter3" style="height:auto;cursor:pointer;">
+					<td valign="top" title="Bestellen" alt="Bestellen" onClick="showBitteWarten();addMenu(this, 20261106,7501, &#39;&#39;, &#39;1&#39;);" colspan="3" style="cursor:pointer;"><ul>
+  <li>Salatbuffet</li>
+  <li>gebackene Käseecken<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i, </span><span title="mit Farbstoff/en" alt="mit Farbstoff/en">1</span>)</sup></li>
+  <li>Toast und Butter<sup class="zusatzstoffe">(<span title="Weizen" alt="Weizen" class="zusatzstoff-allergen">a1, </span><span title="Milch, einschließlich Laktose" alt="Milch, einschließlich Laktose" class="zusatzstoff-allergen">i</span>)</sup></li>
+</ul></td>
+				</tr><tr class="tdFooter3 nowrap" style="height:45px;">
+					<td align="left" valign="middle" colspan="1" style="width:75%;gap:1px;align-items:center;"><img src="../../img/Speisen/Salat.png" align="absmiddle" style="width:35px;border-width:0px;" /></td><td align="right" valign="middle" alt="Bestellhistorie" title="Bestellhistorie" onclick="showMitteilungBox(&#39;../../Menue/BestellhistorieForm.aspx?ID=7501&amp;Menue=Menü C&amp;PID=0&amp;MDatum=06.11.2026 00:00:00&#39;);" colspan="1" style="width:25%;cursor:pointer;"><img src="../../img/Speisen/history.PNG" align="absmiddle" style="width:25px;border-width:0px;" /></td>
+				</tr><tr class="tdFooter3 nowrap">
+					<td class="menue-preis" style="width:30%;"></td><td align="center" valign="middle" onclick="showMenueBox(&#39;../../Menue/MenueDetails2Form.aspx?ID= 7501&#39;);" style="width:30%;"><span id="strDetails" style="cursor:pointer;">Details</span></td>
+				</tr>
+			</table></td>
+		</tr><tr class="tdFooter" style="display:none;">
+			<td class="menuCell" valign="middle" style="font-weight:bold;"></td><td class="menuCell" valign="top" style="text-align:left;"></td><td class="menuCell" valign="top" style="text-align:left;"></td><td class="menuCell" valign="top" style="text-align:left;"></td><td class="menuCell" valign="top" style="text-align:left;"></td><td class="menuCell" valign="top" style="text-align:left;"></td>
+		</tr>
+	</tbody>
+</table></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="lblSpeiesplanHinweis" class="Dataform"><p><b>Zusatzstoffe:</b><br>
+<span style="font-family:'Lucida Sans'; font-size:90%"><sup>(1)</sup> mit Farbstoff/en, <sup>(1a)</sup>&nbsp;E102,&nbsp;<sup>(1b)</sup>&nbsp;E104,&nbsp;<sup>(1c) </sup>E110,&nbsp;<sup>(1d)</sup>&nbsp;E122,&nbsp;<sup>(1e) </sup>E124,&nbsp;<sup>(1f)</sup>&nbsp;E129,<sup>(2)</sup> konserviert, <sup>(2a)</sup>&nbsp;mit Nitratpökelsalz und Nitrat,&nbsp;<sup>(3)</sup> mit Antioxidationsmittel, <sup>(4)</sup> mit Geschmacksverstärker, <sup>(5)</sup> geschwefelt, <sup>(6)</sup> geschwärzt, </span></p><p><span style="font-family:'Lucida Sans'; font-size:90%"><sup>(7)</sup> gewachst, <sup>(8)</sup> mit Phosphat/en, <sup>(9)</sup> mit Süßungsmittel (Aspartam), <sup>(10)</sup> mit Süßungsmittel <br>
+</span><br>
+<b>Allergene:</b><br>
+<span style="font-family:'Lucida Sans'; font-size:90%"><sup>(a)</sup> glutenhaltiges Getreide,<sup>(a1) </sup>Weizen,&nbsp;<sup>(a2)&nbsp;</sup>Roggen,<sup>(a3)&nbsp;</sup>Gerste,&nbsp;<sup>(a4)</sup>&nbsp;Hafer,&nbsp;<sup>(a5) </sup>Dinkel,<sup>(a6) </sup>Kamut,&nbsp;<sup>(b)</sup> Sellerie, <sup>(c)</sup> Erdnüsse, <sup>(d)</sup> Sesamsamen, <sup>(e)</sup> Eier, <sup>(f)</sup> Krustentiere, <sup>(g)</sup> Schalenfrüchte,&nbsp;<sup>(g1)</sup>&nbsp;Mandeln&nbsp;<sup>(g2)&nbsp;</sup>Haselnüsse&nbsp;<sup>(g3) </sup>Walnüsse,&nbsp;<sup>(g4)</sup>&nbsp;Cashewnüsse&nbsp;<sup>(g5) </sup>Pecannüsse,<sup>(g6)</sup>Paranüsse,&nbsp;<sup>(g7)</sup> Pistazien,&nbsp;<sup>(g8)&nbsp;</sup>Macadamianüsse,&nbsp;<sup>(h)</sup> Soja, </span></p><p><span style="font-family:'Lucida Sans'; font-size:90%"><sup>(i)</sup> Milch, einschließlich Laktose, <sup>(j)</sup> Fisch, <sup>(k)</sup> Senf, <sup>(l)</sup> Schwefeldioxid und Sulphite &gt;10mg/kg oder 10mg/l,&nbsp;<sup>(m)&nbsp;</sup>Lupine,&nbsp;<sup>(n)</sup> Weichtiere</span><br>  <br></p></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="hidden" name="hdfID" id="hdfID" />
+                        <input type="hidden" name="hdfObject" id="hdfObject" />
+                        <input type="hidden" name="hdfMaxAnz" id="hdfMaxAnz" value="1" />
+                        <input type="hidden" name="hdfDirectOrder" id="hdfDirectOrder" />
+                        <input type="hidden" name="hdfMenuegruppen" id="hdfMenuegruppen" />
+                        <input type="hidden" name="hdfMenue" id="hdfMenue" />
+                        <input type="hidden" name="hdfDay" id="hdfDay" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl06', 'Form1', [], [], [], 90, '');
+//]]>
+</script>
+
+
+        <script type="text/javascript">
+
+            var url = "PlanForm.aspx"
+
+            $(document).ready(function () {
+                //$(window).load(function () {
+                try {
+                    var maxheight = 0;
+                    var tmpheight;
+                    //tmpheight = $("#td0_201").height();
+                    //maximale Höhe aller td's bestimmen
+                    for (var i = 0; i < 7; i++) {
+                        //$('input[id^="chk_"]').each
+                        $('td[id^="td' + i + '"]').each(
+                            function () {
+                                tmpheight = $(this).height();
+                                if (tmpheight > maxheight) { maxheight = tmpheight; }
+                            });
+                    }
+                    for (var i = 0; i < 7; i++) {
+                        $('td[id^="td' + i + '"]').each(
+                            function () {
+                                $(this).height(maxheight);
+                            });
+                    }
+
+                } catch (e) {
+                    OnFail(e);
+                }
+            });
+
+            function addMenu(objTD, intDay, intMenuID, hinweis, intanz) {
+                try {
+                    //Wenn Menue breits angeklickt, dann löschen
+                    if (objTD.parentNode.parentNode.parentNode.parentNode.className.indexOf('tdSelected') >= 0) {
+                        //Feld einfärben in ROT
+                        objTD.parentNode.parentNode.parentNode.parentNode.className = 'speiseplan-menue tdSelected3'; //rot
+                        try {
+                            document.getElementById("divAnz_" + intDay + "_" + intMenuID).innerHTML = "";
+                        } catch (ex) { }
+                        //aufruf Löschen
+                        url = url + "?action=delete&menue=" + intMenuID + "&day=" + intDay;
+                        document.location = url;
+                    }
+                    else {
+                        let ao;
+                        //Menue noch nicht angeklickt
+                        //Feld einfärben in GRÜN
+                        objTD.parentNode.parentNode.parentNode.parentNode.className = 'speiseplan-menue tdSelected'; //grün
+                        try {
+                            document.getElementById("divAnz_" + intDay + "_" + intMenuID).innerHTML = "1";
+                        } catch (ex) { }
+
+                        try {
+                            ao = $("#cboAusgabeort" + intDay).val();
+                            console.log(ao);
+                            //ao = document.getElementById("cboAusgabeort" + intDay).value;
+                        } catch (ex) {
+                            console.log(ex);
+                        }
+
+                        //Speichern aufrufen
+                        url = url + "?action=save&menue=" + intMenuID + "&day=" + intDay + "&hinweis=" + hinweis + "&anzahl=" + intanz + "&ao=" + ao;
+                        document.location = url;
+                    }
+                } catch (e) {
+                    OnFail(e);
+                }
+            }
+
+            function fillTxt(intDay, intMenueID, intAnz, intMGr, showPlusMinus) {
+                try {
+                    // td-Farbe
+                    document.getElementById("td" + intDay + "_" + intMenueID).className = 'speiseplan-menue tdSelected';
+                    try {
+                        //schreibe Anzahl in div
+                        if (intAnz > 1 || showPlusMinus == 'True') {
+                            document.getElementById("divAnz_" + intDay + "_" + intMenueID).innerHTML = intAnz;
+                        }
+                    } catch (err) { }
+                } catch (e) {
+                    OnFail(e);
+                }
+            }
+
+            function setAmount(intDay, intMenuID, intMgr, intAnz) {
+                try {
+                    let ao;
+                    //Anzahl anzeigen
+                    try {
+                        document.getElementById("divAnz_" + intDay + "_" + intMenuID).innerHTML = intAnz;
+                    } catch (ex) { }
+
+                    try {
+                        ao = document.getElementById("cboAusgabeort" + intDay).value;
+                    } catch (ex) { }
+
+                    //Speichern aufrufen
+                    if (intAnz > 0) {
+                        url = url + "?action=save&menue=" + intMenuID + "&day=" + intDay + "&anzahl=" + intAnz + "&ao=" + ao;
+                    } else {
+                        url = url + "?action=delete&menue=" + intMenuID + "&day=" + intDay + "&ao=" + ao;
+                    }
+
+                    document.location = url;
+                } catch (e) {
+                    OnFail(e);
+                }
+            }
+
+            //Ändere Ausgabeort
+            function changeAO(cbo, datum) {
+                try {
+                    document.location = document.location.pathname + '?action=cao&datum=' + datum + '&ao=' + $(cbo).val();
+                } catch (err) {
+                    OnFail(err);
+                }
+            }
+
+            function OnFail(d) {
+                ende();
+                alert(d._message);
+            }
+        </script>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+
+theForm.oldSubmit = theForm.submit;
+theForm.submit = WebForm_SaveScrollPositionSubmit;
+
+theForm.oldOnSubmit = theForm.onsubmit;
+theForm.onsubmit = WebForm_SaveScrollPositionOnSubmit;
+//]]>
+</script>
+</form>
+</body>
+</html>
