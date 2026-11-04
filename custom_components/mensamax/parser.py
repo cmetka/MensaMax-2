@@ -31,6 +31,8 @@ class ParsedPage:
     hidden_fields: dict[str, str] = field(default_factory=dict)
     has_next: bool = False
     has_previous: bool = False
+    title: str = ""
+    input_names: list[str] = field(default_factory=list)
 
 
 def parse_date(text: str) -> date | None:
@@ -143,6 +145,14 @@ def parse_page(html: str) -> ParsedPage:
     page.has_login_button = soup.find(attrs={"name": "btnLogin"}) is not None
     page.has_next = soup.find(attrs={"name": "btnVor"}) is not None
     page.has_previous = soup.find(attrs={"name": "btnZurueck"}) is not None
+
+    if soup.title is not None:
+        page.title = " ".join(soup.title.get_text().split())
+    page.input_names = [
+        str(tag.get("name"))
+        for tag in soup.find_all("input")
+        if tag.get("name") and not str(tag.get("name")).startswith("__")
+    ]
 
     form = soup.find("form")
     if isinstance(form, Tag):

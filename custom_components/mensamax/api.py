@@ -10,6 +10,7 @@ import asyncio
 from datetime import date, timedelta
 import logging
 from typing import Any
+from urllib.parse import urlsplit
 
 import aiohttp
 
@@ -43,6 +44,12 @@ class InvalidAuth(MensaMaxError):
 
 class PlanNotFound(MensaMaxError):
     """Nach der Anmeldung kam kein Speiseplan zurück."""
+
+
+def _describe(stage: str, page: ParsedPage, url: str) -> str:
+    """Beschreibt eine unerwartete Seite ohne Inhalte oder Zugangsdaten."""
+    fields = ",".join(page.input_names[:8]) or "keine"
+    return f"{stage}: {urlsplit(url).path}, Titel '{page.title[:40]}', Felder {fields}"
 
 
 def _monday(day: date) -> date:
@@ -99,10 +106,9 @@ class MensaMaxClient:
 
     async def async_login(self) -> None:
         """Meldet in zwei Schritten an wie die Website: erst prüfen, dann Kennwort."""
-        page, _ = await self._request("GET", LOGIN_PATH, LOGIN_PATH)
+        page, url = await self._request("GET", LOGIN_PATH, LOGIN_PATH)
         if not page.has_login_form:
-            _LOGGER.debug("Anmeldeseite ohne erwartetes Formular")
-            raise PlanNotFound
+            raise PlanNotFound(_describe("Anmeldeseite", page, url))
 
         page, _ = await self._request(
             "POST",
@@ -136,11 +142,17 @@ class MensaMaxClient:
         page, final_url = await self._request(
             "GET", PLAN_PATH, "/mensamax/navigation.aspx"
         )
+        if not page.has_week and not page.has_login_form:
+            # Das Portal lädt den Plan aus dem Menü heraus; dieses zuerst öffnen.
+            await self._request("GET", "/mensamax/navigation.aspx", "/mensamax/index.aspx")
+            page, final_url = await self._request(
+                "GET", PLAN_PATH, "/mensamax/navigation.aspx"
+            )
         if "login.aspx" in final_url.lower() or page.has_login_form:
             _LOGGER.debug("Plan leitet trotz Anmeldung zur Anmeldeseite")
             raise InvalidAuth
         if not page.has_week:
-            raise PlanNotFound
+            raise PlanNotFound(_describe("Speiseplan", page, final_url))
         return page
 
     async def _navigate(

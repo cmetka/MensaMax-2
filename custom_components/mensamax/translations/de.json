@@ -29,7 +29,7 @@
       "cannot_connect": "MensaMax ist nicht erreichbar.",
       "invalid_account": "Projekt, Einrichtung oder Benutzername wurden nicht angenommen.",
       "invalid_auth": "Die Anmeldung wurde abgelehnt. Prüf das Kennwort.",
-      "plan_not_found": "Nach der Anmeldung kam kein Speiseplan zurück.",
+      "plan_not_found": "Nach der Anmeldung kam kein Speiseplan zurück. Details: {details}",
       "unknown": "Unerwarteter Fehler."
     },
     "abort": {

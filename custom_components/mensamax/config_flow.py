@@ -30,6 +30,8 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 2
 
+    _details = ""
+
     async def _async_test(self, data: dict[str, Any]) -> dict[str, str]:
         try:
             await async_fetch_plan(self.hass, data)
@@ -39,7 +41,8 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
             return {"base": "invalid_account"}
         except InvalidAuth:
             return {"base": "invalid_auth"}
-        except PlanNotFound:
+        except PlanNotFound as err:
+            self._details = str(err)
             return {"base": "plan_not_found"}
         except MensaMaxError:
             _LOGGER.debug("Unerwarteter MensaMax-Fehler", exc_info=True)
@@ -86,6 +89,7 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=self.add_suggested_values_to_schema(schema, suggested),
+            description_placeholders={"details": self._details},
             errors=errors,
         )
 
@@ -109,6 +113,9 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=vol.Schema({vol.Required(CONF_PASSWORD): _PASSWORD}),
-            description_placeholders={"username": entry.data[CONF_USERNAME]},
+            description_placeholders={
+                "username": entry.data[CONF_USERNAME],
+                "details": self._details,
+            },
             errors=errors,
         )

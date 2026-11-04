@@ -105,6 +105,8 @@ class Portal:
             return Response(LOGIN_2, url)
         if not self.logged_in or not self.session_works:
             return Response(LOGIN_1, login_url)
+        if url.endswith("navigation.aspx"):
+            return Response("<title>Menü</title>", url)
         if data and "btnVor" in data:
             self.week += 1
         if data and "btnZurueck" in data:
@@ -199,6 +201,24 @@ class LoginTest(unittest.TestCase):
     def test_session_rejected(self):
         with self.assertRaises(api.InvalidAuth):
             fetch(Portal(session_works=False))
+
+
+class DiagnosticTest(unittest.TestCase):
+    def test_details_name_the_page_but_no_password(self):
+        class NoPlan(Portal):
+            def request(self, method, url, data=None, headers=None, timeout=None):
+                if "PlanForm" in url:
+                    self.calls.append((method, url, dict(data or {})))
+                    return Response("<title>Hinweise</title><input name='btnOk'>", url)
+                return super().request(method, url, data, headers, timeout)
+
+        with self.assertRaises(api.PlanNotFound) as caught:
+            fetch(NoPlan())
+        text = str(caught.exception)
+        self.assertIn("PlanForm.aspx", text)
+        self.assertIn("Hinweise", text)
+        self.assertIn("btnOk", text)
+        self.assertNotIn("geheim", text)
 
 
 class FetchTest(unittest.TestCase):
