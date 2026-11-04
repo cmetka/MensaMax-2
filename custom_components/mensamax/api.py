@@ -1,7 +1,7 @@
 """Anmeldung am MensaMax-Portal und Abruf des Wochenplans.
 
-Die Integration liest nur. Bestellungen löst das Portal über PlanForm.aspx?action=...
-aus. Solche Adressen werden hier nie aufgerufen; PLAN_PATH wird immer unverändert genutzt.
+Der Abruf liest nur. Bestellungen löst das Portal über PlanForm.aspx?action=... aus;
+solche Adressen ruft ausschließlich async_set_order auf.
 """
 
 from __future__ import annotations
@@ -43,6 +43,10 @@ class InvalidAccount(MensaMaxError):
 
 class InvalidAuth(MensaMaxError):
     """Die Anmeldung wurde abgelehnt."""
+
+
+class OrderError(MensaMaxError):
+    """Die Bestellung oder Stornierung wurde nicht ausgeführt oder nicht bestätigt."""
 
 
 class PlanNotFound(MensaMaxError):
@@ -221,6 +225,45 @@ class MensaMaxClient:
             if page.has_login_form or not page.has_week or page.week_start == before:
                 return None
         return page if page.week_start is not None else None
+
+    async def _open_day(self, day: date) -> dict:
+        page = await self._open_plan()
+        page = await self._navigate(page, _monday(day), [_MAX_STEPS])
+        if page is None or day.isoformat() not in page.days:
+            raise OrderError(f"Für {day:%d.%m.%Y} gibt es keinen Plan")
+        return page.days[day.isoformat()]
+
+    async def async_set_order(
+        self, day: date, category: str, order: bool | None
+    ) -> bool:
+        """Bestellt (True), storniert (False) oder schaltet um (None). Liefert den neuen Stand."""
+        await self.async_login()
+        plan = await self._open_day(day)
+        if category not in plan["menu_ids"]:
+            raise OrderError(f"{category} gibt es am {day:%d.%m.%Y} nicht")
+        if category not in plan["orderable"]:
+            raise OrderError(f"{category} am {day:%d.%m.%Y} ist nicht mehr änderbar")
+        is_ordered = category in plan["ordered"]
+        wanted = (not is_ordered) if order is None else order
+        if wanted == is_ordered:
+            return is_ordered
+
+        menu_id = plan["menu_ids"][category]
+        query = f"menue={menu_id}&day={day:%Y%m%d}"
+        if wanted:
+            query = f"action=save&{query}&hinweis=&anzahl=1&ao=undefined"
+        else:
+            query = f"action=delete&{query}"
+        await self._request("GET", f"{PLAN_PATH}?{query}", PLAN_PATH)
+
+        # Nur das zählt, was das Portal danach wirklich anzeigt.
+        confirmed = category in (await self._open_day(day))["ordered"]
+        if confirmed != wanted:
+            raise OrderError(
+                f"Das Portal hat die Änderung für {category} am {day:%d.%m.%Y} "
+                "nicht bestätigt, vermutlich ist die Frist abgelaufen"
+            )
+        return confirmed
 
     async def _async_fetch_kiosk(self, today: date) -> dict[str, Any] | None:
         """Holt die Kioskkäufe der letzten sieben Tage wie die Website (nur lesend)."""

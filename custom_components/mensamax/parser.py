@@ -14,6 +14,8 @@ _DATE = re.compile(r"(\d{2})\.(\d{2})\.(\d{4})")
 _LEADING_ID = re.compile(r"^\d+\s+")
 _AMOUNT = re.compile(r"(-?)\s*(\d{1,3}(?:\.\d{3})*|\d+),(\d{2})")
 _ALERT = re.compile(r"""j?[Aa]lert\(\s*['"]([^'"]{1,120})""")
+_CELL_ID = re.compile(r"^td\d{8}_(\d+)$")
+_ORDER_CLICK = re.compile(r"addMenu\(", re.I)
 _ORDERED_SCRIPT = re.compile(r"fillTxt\(\s*(\d{8})\s*,\s*(\d+)")
 
 
@@ -130,6 +132,8 @@ def _parse_table(table: Tag, page: ParsedPage, ordered_cells: set[str]) -> None:
             "categories": {},
             "ordered": [],
             "prices": {},
+            "menu_ids": {},
+            "orderable": [],
         }
         columns.append(key)
 
@@ -144,6 +148,11 @@ def _parse_table(table: Tag, page: ParsedPage, ordered_cells: set[str]) -> None:
             if key is None:
                 continue
             page.days[key]["categories"][category] = _parse_dishes(cell)
+            cell_id = _CELL_ID.match(str(cell.get("id")))
+            if cell_id:
+                page.days[key]["menu_ids"][category] = cell_id.group(1)
+            if cell.find(attrs={"onclick": _ORDER_CLICK}) is not None:
+                page.days[key]["orderable"].append(category)
             price_cell = cell.find(class_="menue-preis")
             if price_cell is not None:
                 price = parse_amount(price_cell.get_text())

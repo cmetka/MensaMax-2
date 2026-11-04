@@ -1,0 +1,30 @@
+bestellung:
+  name: Essen bestellen oder stornieren
+  description: Ändert eine Bestellung im MensaMax-Portal. Das kostet echtes Geld und ist nur für freigegebene Benutzer möglich.
+  fields:
+    tag:
+      name: Wochentag
+      description: Tag der laufenden Woche, am Wochenende der kommenden.
+      required: true
+      example: montag
+      selector:
+        select:
+          options: [montag, dienstag, mittwoch, donnerstag, freitag]
+    menue:
+      name: Menü
+      required: true
+      example: Menü A
+      selector:
+        text:
+    aktion:
+      name: Aktion
+      required: true
+      example: umschalten
+      selector:
+        select:
+          options: [bestellen, stornieren, umschalten]
+    konto:
+      name: Konto
+      description: Eintrags-ID, nur nötig bei mehreren MensaMax-Konten.
+      selector:
+        text:

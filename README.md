@@ -2,7 +2,7 @@
 
 Meldet sich mit deinem Konto bei `app.mensamax.de` an und zeigt Speiseplan, Bestellstatus, Kontostand und Kioskkäufe als Sensoren.
 
-Die Integration liest nur. Sie bestellt und storniert nichts.
+Bestellen und Stornieren ist möglich, aber nur für Benutzer, die du freigibst. Ohne Freigabe liest die Integration nur.
 
 Inoffiziell und auf Basis der Website gebaut, kann also ausfallen, wenn MensaMax seine Seiten ändert. Inspiriert von [philippdormann/mensamax-api](https://github.com/philippdormann/mensamax-api) (AGPL-3.0, archiviert).
 
@@ -36,6 +36,10 @@ Mit dem Namen `Mensa` entstehen:
 Am Wochenende zeigen die Wochentags-Sensoren schon die kommende Woche. `preis` ist leer, wenn das Portal für das Menü keinen Preis nennt.
 
 Die Daten werden alle zwei Stunden abgerufen, für die laufende und, soweit vorhanden, die kommende Woche.
+
+## Bestellen
+
+Unter **Einstellungen → Geräte & Dienste → MensaMax Speiseplan → Konfigurieren** legst du fest, wer bestellen darf und wer benachrichtigt wird. Die Aktion `mensamax.bestellung` nimmt `tag`, `menue` und `aktion` (`bestellen`, `stornieren`, `umschalten`). Sie prüft den auslösenden Benutzer, lehnt Automationen ab und meldet nur dann Erfolg, wenn das Portal die Änderung danach anzeigt. Bestellungen kosten echtes Geld.
 
 ## Dashboard-Karte
 

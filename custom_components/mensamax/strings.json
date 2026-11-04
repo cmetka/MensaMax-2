@@ -36,5 +36,16 @@
       "already_configured": "This account is already configured.",
       "reauth_successful": "The sign-in was updated."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "MensaMax orders",
+        "data": {
+          "order_users": "May order",
+          "notify_services": "Notify"
+        }
+      }
+    }
   }
 }

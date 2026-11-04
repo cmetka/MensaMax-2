@@ -36,5 +36,16 @@
       "already_configured": "Dieses Konto ist bereits eingerichtet.",
       "reauth_successful": "Die Anmeldung wurde aktualisiert."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "MensaMax-Bestellungen",
+        "data": {
+          "order_users": "Dürfen bestellen",
+          "notify_services": "Benachrichtigen"
+        }
+      }
+    }
   }
 }

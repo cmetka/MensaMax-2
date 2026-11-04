@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 import types
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urlparse
 import unittest
 
 ROOT = Path(__file__).resolve().parent
@@ -124,8 +124,20 @@ class Portal:
         self.logged_in = False
         self.week = 0
         self.calls = []
+        self.ordered = set()
+        self.ignore_orders = False
 
     def request(self, method, url, data=None, headers=None, timeout=None):
+        query = dict(parse_qsl(urlparse(url).query))
+        if "action" in query:
+            self.calls.append((method, url, {}))
+            key = (query["day"], query["menue"])
+            if not self.ignore_orders:
+                if query["action"] == "save":
+                    self.ordered.add(key)
+                else:
+                    self.ordered.discard(key)
+            return Response(self.plan(), url)
         if url.endswith("/GKauf"):
             self.calls.append((method, url, {}))
             self.kiosk_body = json.loads(data)
@@ -149,7 +161,16 @@ class Portal:
             self.week += 1
         if data and "btnZurueck" in data:
             self.week -= 1
-        return Response(shifted(self.week), url)
+        return Response(self.plan(), url)
+
+    def plan(self):
+        html = shifted(self.week)
+        for day, menu in self.ordered:
+            html = html.replace(
+                f'id="td{day}_{menu}" class="speiseplan-menue"',
+                f'id="td{day}_{menu}" class="speiseplan-menue tdSelected"',
+            )
+        return html
 
 
 def fetch(portal, today=date(2026, 11, 4), password="geheim"):
@@ -253,6 +274,63 @@ class LoginTest(unittest.TestCase):
     def test_session_rejected(self):
         with self.assertRaises(api.InvalidAuth):
             fetch(Portal(session_works=False))
+
+
+def change(portal, day, category, order):
+    client = api.MensaMaxClient(portal, "h2798", "Mensa-Gehrden", "kind", "geheim")
+    return asyncio.run(client.async_set_order(day, category, order))
+
+
+class OrderTest(unittest.TestCase):
+    DAY = date(2026, 11, 4)
+
+    def actions(self, portal):
+        return [call[1] for call in portal.calls if "action=" in call[1]]
+
+    def test_order_and_cancel(self):
+        portal = Portal()
+        self.assertTrue(change(portal, self.DAY, "Menü B", True))
+        self.assertEqual(portal.ordered, {("20261104", "7229")})
+        self.assertIn(
+            "action=save&menue=7229&day=20261104&hinweis=&anzahl=1&ao=undefined",
+            self.actions(portal)[0],
+        )
+        self.assertFalse(change(portal, self.DAY, "Menü B", False))
+        self.assertEqual(portal.ordered, set())
+
+    def test_toggle(self):
+        portal = Portal()
+        self.assertTrue(change(portal, self.DAY, "Menü A", None))
+        self.assertFalse(change(portal, self.DAY, "Menü A", None))
+
+    def test_already_ordered_sends_nothing(self):
+        portal = Portal()
+        portal.ordered.add(("20261104", "7229"))
+        self.assertTrue(change(portal, self.DAY, "Menü B", True))
+        self.assertEqual(self.actions(portal), [])
+
+    def test_past_day_is_refused(self):
+        portal = Portal()
+        with self.assertRaises(api.OrderError):
+            change(portal, date(2026, 11, 2), "Menü A", True)
+        self.assertEqual(self.actions(portal), [])
+
+    def test_unknown_menu_is_refused(self):
+        portal = Portal()
+        with self.assertRaises(api.OrderError):
+            change(portal, self.DAY, "Menü Z", True)
+        self.assertEqual(self.actions(portal), [])
+
+    def test_unconfirmed_order_fails(self):
+        portal = Portal()
+        portal.ignore_orders = True
+        with self.assertRaises(api.OrderError):
+            change(portal, self.DAY, "Menü B", True)
+
+    def test_fetch_never_orders(self):
+        portal = Portal()
+        fetch(portal)
+        self.assertEqual(self.actions(portal), [])
 
 
 class KioskTest(unittest.TestCase):

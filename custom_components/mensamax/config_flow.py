@@ -8,16 +8,32 @@ from typing import Any
 
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.const import CONF_NAME, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
 )
 
 from .api import CannotConnect, InvalidAccount, InvalidAuth, MensaMaxError, PlanNotFound
-from .const import CONF_FACILITY, CONF_PROJECT, DEFAULT_NAME, DOMAIN
+from .const import (
+    CONF_FACILITY,
+    CONF_PROJECT,
+    DEFAULT_NAME,
+    DOMAIN,
+    OPT_NOTIFY,
+    OPT_ORDER_USERS,
+)
 from .coordinator import async_fetch_plan
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,6 +47,11 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 2
 
     _details = ""
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        return MensaMaxOptionsFlow()
 
     async def _async_test(self, data: dict[str, Any]) -> dict[str, str]:
         try:
@@ -121,4 +142,37 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
                 "details": self._details,
             },
             errors=errors,
+        )
+
+
+class MensaMaxOptionsFlow(OptionsFlow):
+    """Legt fest, wer bestellen darf und wer benachrichtigt wird."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        if user_input is not None:
+            return self.async_create_entry(data=user_input)
+
+        users = [
+            SelectOptionDict(value=user.id, label=user.name or user.id)
+            for user in await self.hass.auth.async_get_users()
+            if not user.system_generated and user.is_active
+        ]
+        services = sorted(self.hass.services.async_services().get("notify", {}))
+        options = self.config_entry.options
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(
+                        OPT_ORDER_USERS, default=options.get(OPT_ORDER_USERS, [])
+                    ): SelectSelector(SelectSelectorConfig(options=users, multiple=True)),
+                    vol.Optional(
+                        OPT_NOTIFY, default=options.get(OPT_NOTIFY, [])
+                    ): SelectSelector(
+                        SelectSelectorConfig(options=services, multiple=True)
+                    ),
+                }
+            ),
         )

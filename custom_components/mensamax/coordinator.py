@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
+from datetime import date
 import logging
 from typing import Any
 
@@ -21,8 +23,10 @@ from .const import CONF_FACILITY, CONF_PROJECT, DOMAIN, UPDATE_INTERVAL
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_fetch_plan(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
-    """Ruft den Plan in einer eigenen Sitzung ab, damit Cookies getrennt bleiben."""
+async def _async_with_client(
+    hass: HomeAssistant, data: Mapping[str, Any], action: Callable[[MensaMaxClient], Any]
+) -> Any:
+    """Führt eine Aktion in einer eigenen Sitzung aus, damit Cookies getrennt bleiben."""
     # quote_cookie=False: Die Cookies des Portals enthalten Zeichen wie = und /,
     # die unverändert zurückgeschickt werden müssen.
     session = async_create_clientsession(
@@ -36,10 +40,30 @@ async def async_fetch_plan(hass: HomeAssistant, data: dict[str, Any]) -> dict[st
             data[CONF_USERNAME],
             data[CONF_PASSWORD],
         )
-        return await client.async_fetch(dt_util.now().date())
+        return await action(client)
     finally:
         # Home Assistant teilt den Connector; close() ist hier nicht vorgesehen.
         session.detach()
+
+
+async def async_fetch_plan(hass: HomeAssistant, data: Mapping[str, Any]) -> dict[str, Any]:
+    """Ruft den Plan ab."""
+    return await _async_with_client(
+        hass, data, lambda client: client.async_fetch(dt_util.now().date())
+    )
+
+
+async def async_set_order(
+    hass: HomeAssistant,
+    data: Mapping[str, Any],
+    day: date,
+    category: str,
+    order: bool | None,
+) -> bool:
+    """Ändert eine Bestellung und liefert den vom Portal bestätigten Stand."""
+    return await _async_with_client(
+        hass, data, lambda client: client.async_set_order(day, category, order)
+    )
 
 
 class MensaMaxCoordinator(DataUpdateCoordinator[dict[str, Any]]):

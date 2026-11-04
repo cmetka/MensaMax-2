@@ -62,6 +62,7 @@ def day_menus(day: dict | None) -> list[dict[str, Any]]:
             "name": category,
             "preis": day.get("prices", {}).get(category),
             "bestellt": category in day["ordered"],
+            "bestellbar": category in day.get("orderable", []),
             "gerichte": dishes,
         }
         for category, dishes in day["categories"].items()
