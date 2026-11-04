@@ -24,10 +24,6 @@ PLAN_PATH = "/mensamax/Essenbestellung/bestellen-stornieren/PlanForm.aspx"
 
 _TIMEOUT = aiohttp.ClientTimeout(total=60)
 _MAX_STEPS = 8
-# Das Portal liefert anderen Programmen eine abweichende Anmeldeseite.
-_USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
-)
 
 
 class MensaMaxError(Exception):
@@ -88,9 +84,6 @@ class MensaMaxClient:
         extra_headers: dict[str, str] | None = None,
     ) -> tuple[ParsedPage, str]:
         headers = {
-            "User-Agent": _USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "de,en-US;q=0.9,en;q=0.8",
             "Referer": f"{BASE_URL}{referer}",
             "Origin": BASE_URL,
             **(extra_headers or {}),
@@ -126,23 +119,14 @@ class MensaMaxClient:
         )
 
     def _login_fields(self, page: ParsedPage) -> dict[str, str]:
-        """Füllt die Felder unter den Namen aus, die die Seite gerade verwendet."""
-        prefix = "tbx" if "tbxBenutzername" in page.input_names else ""
-
-        def name(field: str) -> str:
-            return f"tbx{field}" if prefix else field.lower()
-
         return {
             **page.hidden_fields,
-            name("Projekt"): self._project,
-            name("Einrichtung"): self._facility,
-            name("Benutzername"): self._username,
+            "tbxProjekt": self._project,
+            "tbxEinrichtung": self._facility,
+            "tbxBenutzername": self._username,
             "hdfLanguage": "german",
             "hdfLogin": "",
         }
-
-    def _password_field(self, page: ParsedPage) -> str:
-        return "tbxKennwort" if "tbxKennwort" in page.input_names else "kennwort"
 
     async def async_login(self) -> None:
         """Meldet an wie die Website: falls verlangt erst prüfen, dann mit Kennwort."""
@@ -157,7 +141,7 @@ class MensaMaxClient:
                 LOGIN_PATH,
                 {
                     **self._login_fields(page),
-                    self._password_field(page): "",
+                    "tbxKennwort": "",
                     "hdfCheck": "",
                     "btnCheck": "",
                 },
@@ -176,7 +160,7 @@ class MensaMaxClient:
             LOGIN_PATH,
             {
                 **self._login_fields(page),
-                self._password_field(page): self._password,
+                "tbxKennwort": self._password,
                 "btnLogin": page.login_button_value,
                 "hdfCheck": "True",
             },

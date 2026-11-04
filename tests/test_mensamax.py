@@ -221,40 +221,14 @@ class LoginTest(unittest.TestCase):
             fetch(Portal(session_works=False))
 
 
-class AlternativeLoginTest(unittest.TestCase):
-    def test_lowercase_form_without_check_step(self):
-        class Alt(Portal):
-            def request(self, method, url, data=None, headers=None, timeout=None):
-                self.calls.append((method, url, dict(data or {})))
-                if url.endswith("/Login.aspx"):
-                    if method == "GET":
-                        return Response(
-                            "<form><input name='projekt'><input name='einrichtung'>"
-                            "<input name='benutzername'><input name='kennwort'>"
-                            "<input type='submit' name='btnLogin' value='Anmelden'></form>",
-                            url,
-                        )
-                    return Response("<html></html>", "https://app.mensamax.de/mensamax/index.aspx")
-                return Response(PLAN, url)
-
-        portal = Alt()
-        fetch(portal)
-        login = portal.calls[1][2]
-        self.assertEqual(login["projekt"], "h2798")
-        self.assertEqual(login["benutzername"], "kind")
-        self.assertEqual(login["kennwort"], "geheim")
-        self.assertEqual(login["btnLogin"], "Anmelden")
-
-    def test_sends_browser_user_agent(self):
-        seen = []
-
-        class Spy(Portal):
-            def request(self, method, url, data=None, headers=None, timeout=None):
-                seen.append(headers["User-Agent"])
-                return super().request(method, url, data, headers, timeout)
-
-        fetch(Spy())
-        self.assertTrue(all(agent.startswith("Mozilla/") for agent in seen))
+class DuplicateAttributeTest(unittest.TestCase):
+    def test_first_name_wins_like_in_browsers(self):
+        page = parser.parse_page(
+            '<form><input name="tbxBenutzername" type="text" name="benutzername">'
+            '<input name="tbxKennwort" type="password" type="text" name="kennwort"></form>'
+        )
+        self.assertTrue(page.has_login_form)
+        self.assertEqual(page.input_names, ["tbxBenutzername", "tbxKennwort"])
 
 
 class DiagnosticTest(unittest.TestCase):
@@ -301,7 +275,6 @@ class FetchTest(unittest.TestCase):
             self.assertNotIn("action", data)
             if not url.endswith("/Login.aspx"):
                 self.assertNotIn("tbxKennwort", data)
-                self.assertNotIn("kennwort", data)
                 self.assertTrue(
                     set(data) & {"btnVor", "btnZurueck"}
                     or method == "GET"

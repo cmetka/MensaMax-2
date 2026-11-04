@@ -143,11 +143,11 @@ def _parse_table(table: Tag, page: ParsedPage, ordered_cells: set[str]) -> None:
 
 def parse_page(html: str) -> ParsedPage:
     """Liest Anmeldeformular oder Wochenplan."""
-    soup = BeautifulSoup(html, "html.parser")
+    # Das Portal schreibt Attribute doppelt, z. B. name="tbxProjekt" und name="projekt".
+    # Browser werten das erste aus, also hier genauso.
+    soup = BeautifulSoup(html, "html.parser", on_duplicate_attribute="ignore")
     page = ParsedPage()
-    page.has_login_form = (
-        soup.find(attrs={"name": ("tbxBenutzername", "benutzername")}) is not None
-    )
+    page.has_login_form = soup.find(attrs={"name": "tbxBenutzername"}) is not None
     login_button = soup.find(attrs={"name": "btnLogin"})
     page.has_login_button = login_button is not None
     if isinstance(login_button, Tag) and login_button.get("value"):
