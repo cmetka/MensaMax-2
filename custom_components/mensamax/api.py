@@ -76,9 +76,16 @@ class MensaMaxClient:
         self._facility = facility
         self._username = username
         self._password = password
+        # Ablauf ohne Inhalte und Zugangsdaten, nur für Fehlermeldungen.
+        self.trace: list[str] = []
 
     async def _request(
-        self, method: str, path: str, referer: str, data: dict[str, str] | None = None
+        self,
+        method: str,
+        path: str,
+        referer: str,
+        data: dict[str, str] | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> tuple[ParsedPage, str]:
         headers = {
             "User-Agent": _USER_AGENT,
@@ -86,6 +93,7 @@ class MensaMaxClient:
             "Accept-Language": "de,en-US;q=0.9,en;q=0.8",
             "Referer": f"{BASE_URL}{referer}",
             "Origin": BASE_URL,
+            **(extra_headers or {}),
         }
         try:
             async with self._session.request(
@@ -98,11 +106,24 @@ class MensaMaxClient:
                 response.raise_for_status()
                 html = await response.text(errors="replace")
                 final_url = str(response.url)
+                status = response.status
         except (aiohttp.ClientError, TimeoutError) as err:
             # Nur den Typ weitergeben, damit nichts aus der Anfrage im Protokoll landet.
             raise CannotConnect(type(err).__name__) from err
         # Die Seiten sind groß, daher nicht in der Event-Loop auslesen.
-        return await asyncio.to_thread(parse_page, html), final_url
+        page = await asyncio.to_thread(parse_page, html)
+        self._remember(method, path, status, final_url, page)
+        return page, final_url
+
+    def _remember(
+        self, method: str, path: str, status: int, url: str, page: ParsedPage
+    ) -> None:
+        jar = getattr(self._session, "cookie_jar", None)
+        cookies = ",".join(sorted(cookie.key for cookie in jar)) if jar else "-"
+        self.trace.append(
+            f"{method} {path.rsplit('/', 1)[-1]} {status} -> "
+            f"{urlsplit(url).path.rsplit('/', 1)[-1]} [{cookies}] {page.messages}"
+        )
 
     def _login_fields(self, page: ParsedPage) -> dict[str, str]:
         """Füllt die Felder unter den Namen aus, die die Seite gerade verwendet."""
@@ -156,7 +177,20 @@ class MensaMaxClient:
             },
         )
         if "login.aspx" in final_url.lower():
-            raise InvalidAuth
+            raise InvalidAuth(" | ".join(self.trace))
+
+        # Dieselben Schritte wie die Website nach der Anmeldung.
+        await self._request("GET", "/mensamax/index.aspx", LOGIN_PATH)
+        try:
+            await self._request(
+                "POST",
+                "/mensamax/index.aspx/GetJwtToken",
+                "/mensamax/index.aspx",
+                extra_headers={"Content-Type": "application/json; charset=utf-8"},
+            )
+        except CannotConnect:
+            self.trace.append("GetJwtToken fehlgeschlagen")
+        await self._request("GET", "/mensamax/navigation.aspx", "/mensamax/index.aspx")
 
     async def _open_plan(self) -> ParsedPage:
         page, final_url = await self._request(
@@ -169,10 +203,11 @@ class MensaMaxClient:
                 "GET", PLAN_PATH, "/mensamax/navigation.aspx"
             )
         if "login.aspx" in final_url.lower() or page.has_login_form:
-            _LOGGER.debug("Plan leitet trotz Anmeldung zur Anmeldeseite")
-            raise InvalidAuth
+            raise InvalidAuth(" | ".join(self.trace))
         if not page.has_week:
-            raise PlanNotFound(_describe("Speiseplan", page, final_url))
+            raise PlanNotFound(
+                _describe("Speiseplan", page, final_url) + " | " + " | ".join(self.trace)
+            )
         return page
 
     async def _navigate(

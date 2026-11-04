@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup, Tag
 _DATE = re.compile(r"(\d{2})\.(\d{2})\.(\d{4})")
 _LEADING_ID = re.compile(r"^\d+\s+")
 _AMOUNT = re.compile(r"(-?)\s*(\d{1,3}(?:\.\d{3})*|\d+),(\d{2})")
+_ALERT = re.compile(r"""j?[Aa]lert\(\s*['"]([^'"]{1,120})""")
 _ORDERED_SCRIPT = re.compile(r"fillTxt\(\s*(\d{8})\s*,\s*(\d+)")
 
 
@@ -35,6 +36,7 @@ class ParsedPage:
     has_previous: bool = False
     title: str = ""
     input_names: list[str] = field(default_factory=list)
+    messages: list[str] = field(default_factory=list)
 
 
 def parse_date(text: str) -> date | None:
@@ -161,6 +163,12 @@ def parse_page(html: str) -> ParsedPage:
         for tag in soup.find_all("input")
         if tag.get("name") and not str(tag.get("name")).startswith("__")
     ]
+
+    for tag in soup.find_all(id=re.compile(r"^(lbl|msg|error|fehler)", re.I)):
+        text = " ".join(tag.get_text(" ").split())
+        if text and tag.get("id") != "lblSpeiesplanHinweis":
+            page.messages.append(text[:120])
+    page.messages = (page.messages + _ALERT.findall(html))[:4]
 
     form = soup.find("form")
     if isinstance(form, Tag):

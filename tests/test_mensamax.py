@@ -65,6 +65,8 @@ def shifted(weeks):
 
 
 class Response:
+    status = 200
+
     def __init__(self, html, url):
         self.html, self.url = html, url
 
@@ -195,6 +197,20 @@ class LoginTest(unittest.TestCase):
         with self.assertRaises(api.InvalidAuth):
             fetch(Portal(), password="falsch")
 
+    def test_rejection_explains_without_secrets(self):
+        with self.assertRaises(api.InvalidAuth) as caught:
+            fetch(Portal(), password="falsch")
+        text = str(caught.exception)
+        self.assertIn("Login.aspx", text)
+        self.assertNotIn("falsch", text)
+
+    def test_visits_portal_like_browser(self):
+        portal = Portal()
+        fetch(portal)
+        paths = [call[1].rsplit("/", 1)[-1] for call in portal.calls]
+        self.assertLess(paths.index("index.aspx"), paths.index("PlanForm.aspx"))
+        self.assertLess(paths.index("GetJwtToken"), paths.index("PlanForm.aspx"))
+
     def test_wrong_account(self):
         with self.assertRaises(api.InvalidAccount):
             fetch(Portal(good_account=False))
@@ -285,7 +301,11 @@ class FetchTest(unittest.TestCase):
             if not url.endswith("/Login.aspx"):
                 self.assertNotIn("tbxKennwort", data)
                 self.assertNotIn("kennwort", data)
-                self.assertTrue(set(data) & {"btnVor", "btnZurueck"} or method == "GET")
+                self.assertTrue(
+                    set(data) & {"btnVor", "btnZurueck"}
+                    or method == "GET"
+                    or url.endswith("/GetJwtToken")
+                )
                 self.assertFalse(data.get("hdfMenue") or data.get("hdfID"))
 
 

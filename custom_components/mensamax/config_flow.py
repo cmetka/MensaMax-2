@@ -39,7 +39,8 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
             return {"base": "cannot_connect"}
         except InvalidAccount:
             return {"base": "invalid_account"}
-        except InvalidAuth:
+        except InvalidAuth as err:
+            _LOGGER.warning("Anmeldung abgelehnt: %s", err)
             return {"base": "invalid_auth"}
         except PlanNotFound as err:
             self._details = str(err)
