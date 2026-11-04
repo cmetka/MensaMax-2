@@ -92,6 +92,7 @@ def shifted(weeks):
         old = PLAN_MONDAY + timedelta(days=offset)
         new = old + timedelta(weeks=weeks)
         html = html.replace(old.strftime("%d.%m.%Y"), new.strftime("%d.%m.%Y"))
+        html = html.replace(old.strftime("td%Y%m%d_"), new.strftime("td%Y%m%d_"))
     return html
 
 
@@ -331,6 +332,18 @@ class OrderTest(unittest.TestCase):
         portal = Portal()
         fetch(portal)
         self.assertEqual(self.actions(portal), [])
+
+
+class WeeksTest(unittest.TestCase):
+    def test_three_weeks_available(self):
+        days = fetch(Portal())["days"]
+        for day in ("2026-11-02", "2026-11-09", "2026-11-16"):
+            self.assertIn(day, days)
+
+    def test_order_next_week(self):
+        portal = Portal()
+        self.assertTrue(change(portal, date(2026, 11, 11), "Menü B", True))
+        self.assertEqual(portal.ordered, {("20261111", "7229")})
 
 
 class KioskTest(unittest.TestCase):

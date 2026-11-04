@@ -84,7 +84,8 @@ async def async_setup_entry(
             MensaBalanceAfterOrdersSensor(coordinator, entry),
             MensaKioskSensor(coordinator, entry),
             *(
-                MensaWeekdaySensor(coordinator, entry, index)
+                MensaWeekdaySensor(coordinator, entry, index, weeks_ahead)
+                for weeks_ahead in (0, 1)
                 for index in range(len(WEEKDAYS))
             ),
         ]
@@ -258,11 +259,17 @@ class MensaWeekdaySensor(MensaSensor):
     """Menüs eines Wochentags: laufende Woche, am Wochenende schon die kommende."""
 
     def __init__(
-        self, coordinator: MensaMaxCoordinator, entry: ConfigEntry, index: int
+        self,
+        coordinator: MensaMaxCoordinator,
+        entry: ConfigEntry,
+        index: int,
+        weeks_ahead: int = 0,
     ) -> None:
         self._index = index
-        self._key = WEEKDAYS[index].lower()
-        self._attr_name = WEEKDAYS[index]
+        self._weeks_ahead = weeks_ahead
+        prefix = "naechste_woche_" if weeks_ahead else ""
+        self._key = f"{prefix}{WEEKDAYS[index].lower()}"
+        self._attr_name = f"Nächste Woche {WEEKDAYS[index]}" if weeks_ahead else WEEKDAYS[index]
         super().__init__(coordinator, entry)
 
     @property
@@ -271,7 +278,7 @@ class MensaWeekdaySensor(MensaSensor):
         monday = today - timedelta(days=today.weekday())
         if today.weekday() >= 5:
             monday += timedelta(days=7)
-        return (monday + timedelta(days=self._index)).isoformat()
+        return (monday + timedelta(days=self._index, weeks=self._weeks_ahead)).isoformat()
 
     @property
     def native_value(self) -> str:

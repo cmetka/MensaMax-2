@@ -31,6 +31,7 @@ Mit dem Namen `Mensa` entstehen:
 | `sensor.mensa_kontostand` | Aktueller Kontostand in Euro | |
 | `sensor.mensa_kontostand_nach_bestellungen` | Kontostand nach offenen Bestellungen | |
 | `sensor.mensa_montag` bis `sensor.mensa_freitag` | Datum oder `Kein Angebot` | `datum`, `menues` |
+| `sensor.mensa_nachste_woche_montag` bis `..._freitag` | Dasselbe für die Woche danach | `datum`, `menues` |
 | `sensor.mensa_kiosk_letzte_woche` | Summe der letzten sieben Tage in Euro | `kaeufe` |
 
 Am Wochenende zeigen die Wochentags-Sensoren schon die kommende Woche. `preis` ist leer, wenn das Portal für das Menü keinen Preis nennt.
@@ -39,7 +40,7 @@ Die Daten werden alle zwei Stunden abgerufen, für die laufende und, soweit vorh
 
 ## Bestellen
 
-Unter **Einstellungen → Geräte & Dienste → MensaMax Speiseplan → Konfigurieren** legst du fest, wer bestellen darf und wer benachrichtigt wird. Die Aktion `mensamax.bestellung` nimmt `tag`, `menue` und `aktion` (`bestellen`, `stornieren`, `umschalten`). Sie prüft den auslösenden Benutzer, lehnt Automationen ab und meldet nur dann Erfolg, wenn das Portal die Änderung danach anzeigt. Bestellungen kosten echtes Geld.
+Unter **Einstellungen → Geräte & Dienste → MensaMax Speiseplan → Konfigurieren** legst du fest, wer bestellen darf und wer benachrichtigt wird. Die Aktion `mensamax.bestellung` nimmt `tag`, `woche` (`diese`, `naechste`), `menue` und `aktion` (`bestellen`, `stornieren`, `umschalten`). Sie prüft den auslösenden Benutzer, lehnt Automationen ab und meldet nur dann Erfolg, wenn das Portal die Änderung danach anzeigt. Bestellungen kosten echtes Geld.
 
 ## Dashboard-Karte
 

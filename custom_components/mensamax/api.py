@@ -312,14 +312,18 @@ class MensaMaxClient:
             "days": days,
         }
 
-        try:
-            following = await self._navigate(
-                page, this_monday + timedelta(days=7), steps
-            )
-        except MensaMaxError as err:
-            _LOGGER.debug("Kommende Woche nicht abrufbar: %s", type(err).__name__)
-            following = None
-        if following is not None:
-            days.update(following.days)
+        # Zwei Wochen voraus, damit am Wochenende auch "nächste Woche" vollständig ist.
+        for weeks in (1, 2):
+            try:
+                following = await self._navigate(
+                    page, this_monday + timedelta(days=7 * weeks), steps
+                )
+            except MensaMaxError as err:
+                _LOGGER.debug("Woche +%s nicht abrufbar: %s", weeks, type(err).__name__)
+                break
+            if following is None:
+                break
+            page = following
+            days.update(page.days)
         result["kiosk"] = await self._async_fetch_kiosk(today)
         return result

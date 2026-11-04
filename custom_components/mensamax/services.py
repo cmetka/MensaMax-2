@@ -24,17 +24,18 @@ _SCHEMA = vol.Schema(
         vol.Required("tag"): vol.In(WEEKDAYS),
         vol.Required("menue"): str,
         vol.Required("aktion"): vol.In(tuple(_ACTIONS)),
+        vol.Optional("woche", default="diese"): vol.In(("diese", "naechste")),
         vol.Optional("konto"): str,
     }
 )
 
 
-def weekday_date(today: date, weekday: str) -> date:
-    """Datum des Wochentags: laufende Woche, am Wochenende die kommende."""
+def weekday_date(today: date, weekday: str, weeks_ahead: int = 0) -> date:
+    """Datum des Wochentags: laufende Woche, am Wochenende die kommende, plus Versatz."""
     monday = today - timedelta(days=today.weekday())
     if today.weekday() >= 5:
         monday += timedelta(days=7)
-    return monday + timedelta(days=WEEKDAYS.index(weekday))
+    return monday + timedelta(days=WEEKDAYS.index(weekday), weeks=weeks_ahead)
 
 
 @callback
@@ -56,7 +57,11 @@ def async_register_services(hass: HomeAssistant) -> None:
             _LOGGER.warning("Bestellung ohne Berechtigung abgelehnt (Benutzer %s)", user_id)
             raise ServiceValidationError("Du darfst bei MensaMax nicht bestellen")
 
-        day = weekday_date(dt_util.now().date(), call.data["tag"])
+        day = weekday_date(
+            dt_util.now().date(),
+            call.data["tag"],
+            1 if call.data["woche"] == "naechste" else 0,
+        )
         category = call.data["menue"]
         try:
             ordered = await async_set_order(

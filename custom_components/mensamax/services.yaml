@@ -10,6 +10,14 @@ bestellung:
       selector:
         select:
           options: [montag, dienstag, mittwoch, donnerstag, freitag]
+    woche:
+      name: Woche
+      description: Angezeigte Woche oder die Woche danach.
+      default: diese
+      example: naechste
+      selector:
+        select:
+          options: [diese, naechste]
     menue:
       name: Menü
       required: true
