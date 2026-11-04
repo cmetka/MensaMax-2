@@ -24,6 +24,10 @@ PLAN_PATH = "/mensamax/Essenbestellung/bestellen-stornieren/PlanForm.aspx"
 
 _TIMEOUT = aiohttp.ClientTimeout(total=60)
 _MAX_STEPS = 8
+# Das Portal liefert anderen Programmen eine abweichende Anmeldeseite.
+_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
+)
 
 
 class MensaMaxError(Exception):
@@ -76,7 +80,13 @@ class MensaMaxClient:
     async def _request(
         self, method: str, path: str, referer: str, data: dict[str, str] | None = None
     ) -> tuple[ParsedPage, str]:
-        headers = {"Referer": f"{BASE_URL}{referer}", "Origin": BASE_URL}
+        headers = {
+            "User-Agent": _USER_AGENT,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "de,en-US;q=0.9,en;q=0.8",
+            "Referer": f"{BASE_URL}{referer}",
+            "Origin": BASE_URL,
+        }
         try:
             async with self._session.request(
                 method,
@@ -95,34 +105,44 @@ class MensaMaxClient:
         return await asyncio.to_thread(parse_page, html), final_url
 
     def _login_fields(self, page: ParsedPage) -> dict[str, str]:
+        """Füllt die Felder unter den Namen aus, die die Seite gerade verwendet."""
+        prefix = "tbx" if "tbxBenutzername" in page.input_names else ""
+
+        def name(field: str) -> str:
+            return f"tbx{field}" if prefix else field.lower()
+
         return {
             **page.hidden_fields,
-            "tbxProjekt": self._project,
-            "tbxEinrichtung": self._facility,
-            "tbxBenutzername": self._username,
+            name("Projekt"): self._project,
+            name("Einrichtung"): self._facility,
+            name("Benutzername"): self._username,
             "hdfLanguage": "german",
             "hdfLogin": "",
         }
 
+    def _password_field(self, page: ParsedPage) -> str:
+        return "tbxKennwort" if "tbxKennwort" in page.input_names else "kennwort"
+
     async def async_login(self) -> None:
-        """Meldet in zwei Schritten an wie die Website: erst prüfen, dann Kennwort."""
+        """Meldet an wie die Website: falls verlangt erst prüfen, dann mit Kennwort."""
         page, url = await self._request("GET", LOGIN_PATH, LOGIN_PATH)
         if not page.has_login_form:
             raise PlanNotFound(_describe("Anmeldeseite", page, url))
 
-        page, _ = await self._request(
-            "POST",
-            LOGIN_PATH,
-            LOGIN_PATH,
-            {
-                **self._login_fields(page),
-                "tbxKennwort": "",
-                "hdfCheck": "",
-                "btnCheck": "",
-            },
-        )
-        if not page.has_login_button:
-            raise InvalidAccount
+        if page.has_check_button:
+            page, url = await self._request(
+                "POST",
+                LOGIN_PATH,
+                LOGIN_PATH,
+                {
+                    **self._login_fields(page),
+                    self._password_field(page): "",
+                    "hdfCheck": "",
+                    "btnCheck": "",
+                },
+            )
+            if not page.has_login_button:
+                raise InvalidAccount
 
         page, final_url = await self._request(
             "POST",
@@ -130,8 +150,8 @@ class MensaMaxClient:
             LOGIN_PATH,
             {
                 **self._login_fields(page),
-                "tbxKennwort": self._password,
-                "btnLogin": "Login",
+                self._password_field(page): self._password,
+                "btnLogin": page.login_button_value,
                 "hdfCheck": "True",
             },
         )

@@ -20,6 +20,8 @@ class ParsedPage:
 
     has_login_form: bool = False
     has_login_button: bool = False
+    has_check_button: bool = False
+    login_button_value: str = "Login"
     has_week: bool = False
     time_range: str = ""
     hinweis: str = ""
@@ -141,8 +143,14 @@ def parse_page(html: str) -> ParsedPage:
     """Liest Anmeldeformular oder Wochenplan."""
     soup = BeautifulSoup(html, "html.parser")
     page = ParsedPage()
-    page.has_login_form = soup.find(attrs={"name": "tbxBenutzername"}) is not None
-    page.has_login_button = soup.find(attrs={"name": "btnLogin"}) is not None
+    page.has_login_form = (
+        soup.find(attrs={"name": ("tbxBenutzername", "benutzername")}) is not None
+    )
+    login_button = soup.find(attrs={"name": "btnLogin"})
+    page.has_login_button = login_button is not None
+    if isinstance(login_button, Tag) and login_button.get("value"):
+        page.login_button_value = str(login_button.get("value"))
+    page.has_check_button = soup.find(attrs={"name": "btnCheck"}) is not None
     page.has_next = soup.find(attrs={"name": "btnVor"}) is not None
     page.has_previous = soup.find(attrs={"name": "btnZurueck"}) is not None
 

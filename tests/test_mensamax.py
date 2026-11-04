@@ -45,11 +45,12 @@ PLAN_MONDAY = date(2026, 11, 2)
 HIDDEN = '<input type="hidden" name="__VIEWSTATE" value="{}">'
 LOGIN_1 = (
     "<form>" + HIDDEN.format("v1") + '<input name="tbxBenutzername">'
+    '<input name="tbxKennwort"><input type="submit" name="btnLogin" value="Anmelden">'
     '<input type="submit" name="btnCheck"></form>'
 )
 LOGIN_2 = (
     "<form>" + HIDDEN.format("v2") + '<input name="tbxBenutzername">'
-    '<input name="tbxKennwort"><input type="submit" name="btnLogin"></form>'
+    '<input name="tbxKennwort"><input type="submit" name="btnLogin" value="Anmelden"></form>'
 )
 
 
@@ -186,7 +187,7 @@ class LoginTest(unittest.TestCase):
         self.assertNotIn("btnLogin", check[2])
         self.assertEqual(login[2]["__VIEWSTATE"], "v2")
         self.assertEqual(login[2]["tbxKennwort"], "geheim")
-        self.assertEqual(login[2]["btnLogin"], "Login")
+        self.assertEqual(login[2]["btnLogin"], "Anmelden")
         self.assertEqual(login[2]["hdfCheck"], "True")
         self.assertNotIn("btnCheck", login[2])
 
@@ -201,6 +202,42 @@ class LoginTest(unittest.TestCase):
     def test_session_rejected(self):
         with self.assertRaises(api.InvalidAuth):
             fetch(Portal(session_works=False))
+
+
+class AlternativeLoginTest(unittest.TestCase):
+    def test_lowercase_form_without_check_step(self):
+        class Alt(Portal):
+            def request(self, method, url, data=None, headers=None, timeout=None):
+                self.calls.append((method, url, dict(data or {})))
+                if url.endswith("/Login.aspx"):
+                    if method == "GET":
+                        return Response(
+                            "<form><input name='projekt'><input name='einrichtung'>"
+                            "<input name='benutzername'><input name='kennwort'>"
+                            "<input type='submit' name='btnLogin' value='Anmelden'></form>",
+                            url,
+                        )
+                    return Response("<html></html>", "https://app.mensamax.de/mensamax/index.aspx")
+                return Response(PLAN, url)
+
+        portal = Alt()
+        fetch(portal)
+        login = portal.calls[1][2]
+        self.assertEqual(login["projekt"], "h2798")
+        self.assertEqual(login["benutzername"], "kind")
+        self.assertEqual(login["kennwort"], "geheim")
+        self.assertEqual(login["btnLogin"], "Anmelden")
+
+    def test_sends_browser_user_agent(self):
+        seen = []
+
+        class Spy(Portal):
+            def request(self, method, url, data=None, headers=None, timeout=None):
+                seen.append(headers["User-Agent"])
+                return super().request(method, url, data, headers, timeout)
+
+        fetch(Spy())
+        self.assertTrue(all(agent.startswith("Mozilla/") for agent in seen))
 
 
 class DiagnosticTest(unittest.TestCase):
@@ -247,6 +284,7 @@ class FetchTest(unittest.TestCase):
             self.assertNotIn("action", data)
             if not url.endswith("/Login.aspx"):
                 self.assertNotIn("tbxKennwort", data)
+                self.assertNotIn("kennwort", data)
                 self.assertTrue(set(data) & {"btnVor", "btnZurueck"} or method == "GET")
                 self.assertFalse(data.get("hdfMenue") or data.get("hdfID"))
 
