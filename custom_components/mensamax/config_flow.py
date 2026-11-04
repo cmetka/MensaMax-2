@@ -37,7 +37,8 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
             await async_fetch_plan(self.hass, data)
         except CannotConnect:
             return {"base": "cannot_connect"}
-        except InvalidAccount:
+        except InvalidAccount as err:
+            _LOGGER.warning("Konto nicht angenommen: %s", err)
             return {"base": "invalid_account"}
         except InvalidAuth as err:
             _LOGGER.warning("Anmeldung abgelehnt: %s", err)

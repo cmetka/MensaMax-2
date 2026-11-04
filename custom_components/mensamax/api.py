@@ -52,7 +52,7 @@ class PlanNotFound(MensaMaxError):
 
 def _describe(stage: str, page: ParsedPage, url: str) -> str:
     """Beschreibt eine unerwartete Seite ohne Inhalte oder Zugangsdaten."""
-    fields = ",".join(page.input_names[:8]) or "keine"
+    fields = ",".join(page.input_names[:12]) or "keine"
     return f"{stage}: {urlsplit(url).path}, Titel '{page.title[:40]}', Felder {fields}"
 
 
@@ -164,7 +164,11 @@ class MensaMaxClient:
             )
             # Die Website setzt hdfCheck serverseitig, wenn das Konto gefunden wurde.
             if page.hidden_fields.get("hdfCheck") != "True":
-                raise InvalidAccount
+                raise InvalidAccount(
+                    f"hdfCheck={page.hidden_fields.get('hdfCheck')!r}, "
+                    f"Versteckt {sorted(page.hidden_fields)}, "
+                    f"Felder {page.input_names}, " + " | ".join(self.trace)
+                )
 
         page, final_url = await self._request(
             "POST",

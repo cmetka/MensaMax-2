@@ -170,12 +170,11 @@ def parse_page(html: str) -> ParsedPage:
             page.messages.append(text[:120])
     page.messages = (page.messages + _ALERT.findall(html))[:4]
 
-    form = soup.find("form")
-    if isinstance(form, Tag):
-        for field_tag in form.find_all("input", attrs={"type": "hidden"}):
-            name = field_tag.get("name")
-            if name:
-                page.hidden_fields[str(name)] = str(field_tag.get("value") or "")
+    # Über das ganze Dokument suchen: Ungültiges HTML kann das Formular vorzeitig beenden.
+    for field_tag in soup.find_all("input", attrs={"type": "hidden"}):
+        name = field_tag.get("name")
+        if name:
+            page.hidden_fields[str(name)] = str(field_tag.get("value") or "")
 
     week = soup.find(id="lblWoche")
     if week is not None:
