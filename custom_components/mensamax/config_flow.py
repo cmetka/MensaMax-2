@@ -43,6 +43,7 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
             return {"base": "invalid_auth"}
         except PlanNotFound as err:
             self._details = str(err)
+            _LOGGER.warning("Kein Speiseplan: %s", err)
             return {"base": "plan_not_found"}
         except MensaMaxError:
             _LOGGER.debug("Unerwarteter MensaMax-Fehler", exc_info=True)
