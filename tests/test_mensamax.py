@@ -55,6 +55,36 @@ LOGIN_2 = (
 )
 
 
+KIOSK_REPLY = json.dumps(
+    {
+        "d": json.dumps(
+            {
+                "Summe": 400,
+                "Gutschrift": 0,
+                "Kaeufe": [
+                    {
+                        "AnzahlWare": "1x Brötchen",
+                        "Betrag": 250,
+                        "Datum": "2026-11-02T09:57:28.123",
+                        "DatumAnzeige": "Mo, 02.11.2026",
+                        "Gutschrift": 0,
+                        "UhrzeitAnzeige": "09:57",
+                    },
+                    {
+                        "AnzahlWare": "1x Brezel",
+                        "Betrag": 150,
+                        "Datum": "2026-11-03T12:25:45.097",
+                        "DatumAnzeige": "Di, 03.11.2026",
+                        "Gutschrift": 0,
+                        "UhrzeitAnzeige": "12:25",
+                    },
+                ],
+            }
+        )
+    }
+)
+
+
 def shifted(weeks):
     """Beispielseite um ganze Wochen verschoben."""
     html = PLAN
@@ -96,6 +126,10 @@ class Portal:
         self.calls = []
 
     def request(self, method, url, data=None, headers=None, timeout=None):
+        if url.endswith("/GKauf"):
+            self.calls.append((method, url, {}))
+            self.kiosk_body = json.loads(data)
+            return Response(KIOSK_REPLY, url)
         self.calls.append((method, url, dict(data or {})))
         login_url = "https://app.mensamax.de/Login.aspx"
         if url == login_url:
@@ -221,6 +255,45 @@ class LoginTest(unittest.TestCase):
             fetch(Portal(session_works=False))
 
 
+class KioskTest(unittest.TestCase):
+    def test_last_seven_days_newest_first(self):
+        portal = Portal()
+        data = fetch(portal)
+        self.assertEqual(
+            portal.kiosk_body, {"pv_strVon": "28.10.2026", "pv_strBis": "04.11.2026"}
+        )
+        self.assertEqual(data["kiosk"]["total"], 4.0)
+        first = data["kiosk"]["purchases"][0]
+        self.assertEqual(first["ware"], "1x Brezel")
+        self.assertEqual(first["uhrzeit"], "12:25")
+        self.assertEqual(first["datum"], "Di, 03.11.2026")
+        self.assertEqual(first["betrag"], 1.5)
+
+    def test_kiosk_failure_keeps_menu(self):
+        class Broken(Portal):
+            def request(self, method, url, data=None, headers=None, timeout=None):
+                if url.endswith("/GKauf"):
+                    return Response("kein json", url)
+                return super().request(method, url, data, headers, timeout)
+
+        data = fetch(Broken())
+        self.assertIsNone(data["kiosk"])
+        self.assertIn("2026-11-02", data["days"])
+
+
+class PriceTest(unittest.TestCase):
+    def test_price_when_portal_names_one(self):
+        html = PLAN.replace(
+            'class="menue-preis" style="width:30%;"></td>',
+            'class="menue-preis" style="width:30%;">3,80 €</td>',
+        )
+        day = parser.parse_page(html).days["2026-11-04"]
+        self.assertEqual(day["prices"]["Menü A"], 3.8)
+
+    def test_no_price_stays_empty(self):
+        self.assertEqual(parser.parse_page(PLAN).days["2026-11-04"]["prices"], {})
+
+
 class DuplicateAttributeTest(unittest.TestCase):
     def test_first_name_wins_like_in_browsers(self):
         page = parser.parse_page(
@@ -279,6 +352,7 @@ class FetchTest(unittest.TestCase):
                     set(data) & {"btnVor", "btnZurueck"}
                     or method == "GET"
                     or url.endswith("/GetJwtToken")
+                    or url.endswith("/GKauf")
                 )
                 self.assertFalse(data.get("hdfMenue") or data.get("hdfID"))
 

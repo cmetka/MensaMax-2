@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
@@ -21,6 +21,7 @@ from .coordinator import MensaMaxCoordinator
 NO_MENU = "Kein Angebot"
 NOT_ORDERED = "Nicht bestellt"
 MAX_STATE = 255
+WEEKDAYS = ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag")
 
 
 def _has_dishes(day: dict) -> bool:
@@ -52,6 +53,22 @@ def day_attributes(iso_day: str | None, day: dict | None) -> dict[str, Any]:
     }
 
 
+def day_menus(day: dict | None) -> list[dict[str, Any]]:
+    """Alle Menüs eines Tages mit Preis, soweit das Portal einen nennt."""
+    if day is None:
+        return []
+    return [
+        {
+            "name": category,
+            "preis": day.get("prices", {}).get(category),
+            "bestellt": category in day["ordered"],
+            "gerichte": dishes,
+        }
+        for category, dishes in day["categories"].items()
+        if dishes
+    ]
+
+
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
@@ -64,6 +81,11 @@ async def async_setup_entry(
             MensaOrderedTodaySensor(coordinator, entry),
             MensaBalanceSensor(coordinator, entry),
             MensaBalanceAfterOrdersSensor(coordinator, entry),
+            MensaKioskSensor(coordinator, entry),
+            *(
+                MensaWeekdaySensor(coordinator, entry, index)
+                for index in range(len(WEEKDAYS))
+            ),
         ]
     )
 
@@ -74,7 +96,9 @@ class MensaSensor(CoordinatorEntity[MensaMaxCoordinator], SensorEntity):
     _attr_has_entity_name = True
     _attr_icon = "mdi:silverware-fork-knife"
     # Der Plan kann groß werden und gehört nicht in die Verlaufsdatenbank.
-    _unrecorded_attributes = frozenset({"gerichte", "tage", "hinweis"})
+    _unrecorded_attributes = frozenset(
+        {"gerichte", "tage", "hinweis", "menues", "kaeufe"}
+    )
     _key: str
 
     def __init__(self, coordinator: MensaMaxCoordinator, entry: ConfigEntry) -> None:
@@ -227,3 +251,55 @@ class MensaBalanceAfterOrdersSensor(MensaBalanceSensor):
     _key = "kontostand_nach_bestellungen"
     _attr_name = "Kontostand nach Bestellungen"
     _field = "balance_after_orders"
+
+
+class MensaWeekdaySensor(MensaSensor):
+    """Menüs eines Wochentags: laufende Woche, am Wochenende schon die kommende."""
+
+    def __init__(
+        self, coordinator: MensaMaxCoordinator, entry: ConfigEntry, index: int
+    ) -> None:
+        self._index = index
+        self._key = WEEKDAYS[index].lower()
+        self._attr_name = WEEKDAYS[index]
+        super().__init__(coordinator, entry)
+
+    @property
+    def _iso_day(self) -> str:
+        today = self._today
+        monday = today - timedelta(days=today.weekday())
+        if today.weekday() >= 5:
+            monday += timedelta(days=7)
+        return (monday + timedelta(days=self._index)).isoformat()
+
+    @property
+    def native_value(self) -> str:
+        day = self._days.get(self._iso_day)
+        return day["label"] if day and day_menus(day) else NO_MENU
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "datum": self._iso_day,
+            "menues": day_menus(self._days.get(self._iso_day)),
+        }
+
+
+class MensaKioskSensor(MensaSensor):
+    """Summe und einzelne Kioskkäufe der letzten sieben Tage."""
+
+    _key = "kiosk_letzte_woche"
+    _attr_name = "Kiosk letzte Woche"
+    _attr_icon = "mdi:store"
+    _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_native_unit_of_measurement = CURRENCY_EURO
+
+    @property
+    def native_value(self) -> float | None:
+        kiosk = self.coordinator.data.get("kiosk")
+        return kiosk["total"] if kiosk else None
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        kiosk = self.coordinator.data.get("kiosk")
+        return {"kaeufe": kiosk["purchases"] if kiosk else []}

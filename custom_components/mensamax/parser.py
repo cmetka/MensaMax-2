@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
+import json
 import re
+from typing import Any
 
 from bs4 import BeautifulSoup, Tag
 
@@ -123,7 +125,12 @@ def _parse_table(table: Tag, page: ParsedPage, ordered_cells: set[str]) -> None:
             columns.append(None)
             continue
         key = day.isoformat()
-        page.days[key] = {"label": label, "categories": {}, "ordered": []}
+        page.days[key] = {
+            "label": label,
+            "categories": {},
+            "ordered": [],
+            "prices": {},
+        }
         columns.append(key)
 
     for row in rows[1:]:
@@ -137,6 +144,11 @@ def _parse_table(table: Tag, page: ParsedPage, ordered_cells: set[str]) -> None:
             if key is None:
                 continue
             page.days[key]["categories"][category] = _parse_dishes(cell)
+            price_cell = cell.find(class_="menue-preis")
+            if price_cell is not None:
+                price = parse_amount(price_cell.get_text())
+                if price is not None:
+                    page.days[key]["prices"][category] = price
             if _is_ordered(cell, ordered_cells):
                 page.days[key]["ordered"].append(category)
 
@@ -203,3 +215,24 @@ def parse_page(html: str) -> ParsedPage:
         if page.week_start is None and page.days:
             page.week_start = date.fromisoformat(min(page.days))
     return page
+
+
+def parse_kiosk(text: str) -> dict[str, Any]:
+    """Liest die Antwort von GKauf: {"d": "<JSON mit Summe, Gutschrift und Kaeufe>"}."""
+    data = json.loads(json.loads(text)["d"])
+    purchases = [
+        {
+            "zeitpunkt": row["Datum"],
+            "datum": row["DatumAnzeige"],
+            "uhrzeit": row["UhrzeitAnzeige"],
+            "ware": row["AnzahlWare"],
+            "betrag": row["Betrag"] / 100,
+            "gutschrift": row.get("Gutschrift", 0) / 100,
+        }
+        for row in data["Kaeufe"]
+    ]
+    purchases.sort(key=lambda row: row["zeitpunkt"], reverse=True)
+    return {
+        "total": (data["Summe"] - data["Gutschrift"]) / 100,
+        "purchases": purchases,
+    }

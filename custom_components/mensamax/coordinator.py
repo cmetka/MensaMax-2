@@ -43,7 +43,7 @@ async def async_fetch_plan(hass: HomeAssistant, data: dict[str, Any]) -> dict[st
 
 
 class MensaMaxCoordinator(DataUpdateCoordinator[dict[str, Any]]):
-    """Aktualisiert den Speiseplan alle sechs Stunden."""
+    """Aktualisiert den Speiseplan alle zwei Stunden."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         super().__init__(

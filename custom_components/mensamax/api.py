@@ -8,19 +8,22 @@ from __future__ import annotations
 
 import asyncio
 from datetime import date, timedelta
+import json
 import logging
 from typing import Any
 from urllib.parse import urlsplit
 
 import aiohttp
 
-from .parser import ParsedPage, parse_page
+from .parser import ParsedPage, parse_kiosk, parse_page
 
 _LOGGER = logging.getLogger(__name__)
 
 BASE_URL = "https://app.mensamax.de"
 LOGIN_PATH = "/Login.aspx"
 PLAN_PATH = "/mensamax/Essenbestellung/bestellen-stornieren/PlanForm.aspx"
+KIOSK_PAGE = "/mensamax/MeineDaten/MeinKioskkaufForm.aspx"
+KIOSK_DAYS = 7
 
 _TIMEOUT = aiohttp.ClientTimeout(total=60)
 _MAX_STEPS = 8
@@ -219,6 +222,33 @@ class MensaMaxClient:
                 return None
         return page if page.week_start is not None else None
 
+    async def _async_fetch_kiosk(self, today: date) -> dict[str, Any] | None:
+        """Holt die Kioskkäufe der letzten sieben Tage wie die Website (nur lesend)."""
+        body = json.dumps(
+            {
+                "pv_strVon": (today - timedelta(days=KIOSK_DAYS)).strftime("%d.%m.%Y"),
+                "pv_strBis": today.strftime("%d.%m.%Y"),
+            }
+        )
+        try:
+            async with self._session.request(
+                "POST",
+                f"{BASE_URL}{KIOSK_PAGE}/GKauf",
+                data=body,
+                headers={
+                    "Content-Type": "application/json; charset=utf-8",
+                    "Referer": f"{BASE_URL}{KIOSK_PAGE}",
+                    "Origin": BASE_URL,
+                },
+                timeout=_TIMEOUT,
+            ) as response:
+                response.raise_for_status()
+                text = await response.text(errors="replace")
+            return parse_kiosk(text)
+        except (aiohttp.ClientError, TimeoutError, ValueError, KeyError, TypeError) as err:
+            _LOGGER.warning("Kioskkäufe nicht abrufbar: %s", type(err).__name__)
+            return None
+
     async def async_fetch(self, today: date) -> dict[str, Any]:
         """Meldet an und holt die laufende und, falls vorhanden, die kommende Woche."""
         await self.async_login()
@@ -248,4 +278,5 @@ class MensaMaxClient:
             following = None
         if following is not None:
             days.update(following.days)
+        result["kiosk"] = await self._async_fetch_kiosk(today)
         return result

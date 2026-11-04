@@ -1,6 +1,6 @@
 # MensaMax Speiseplan für Home Assistant
 
-Meldet sich mit deinem Konto bei `app.mensamax.de` an und zeigt Speiseplan, Bestellstatus und Kontostand als Sensoren.
+Meldet sich mit deinem Konto bei `app.mensamax.de` an und zeigt Speiseplan, Bestellstatus, Kontostand und Kioskkäufe als Sensoren.
 
 Die Integration liest nur. Sie bestellt und storniert nichts.
 
@@ -30,8 +30,12 @@ Mit dem Namen `Mensa` entstehen:
 | `sensor.mensa_bestellt_heute` | z. B. `Menü B` oder `Nicht bestellt` | `gerichte` |
 | `sensor.mensa_kontostand` | Aktueller Kontostand in Euro | |
 | `sensor.mensa_kontostand_nach_bestellungen` | Kontostand nach offenen Bestellungen | |
+| `sensor.mensa_montag` bis `sensor.mensa_freitag` | Datum oder `Kein Angebot` | `datum`, `menues` |
+| `sensor.mensa_kiosk_letzte_woche` | Summe der letzten sieben Tage in Euro | `kaeufe` |
 
-Die Daten werden alle sechs Stunden abgerufen, für die laufende und, soweit vorhanden, die kommende Woche.
+Am Wochenende zeigen die Wochentags-Sensoren schon die kommende Woche. `preis` ist leer, wenn das Portal für das Menü keinen Preis nennt.
+
+Die Daten werden alle zwei Stunden abgerufen, für die laufende und, soweit vorhanden, die kommende Woche.
 
 ## Dashboard-Karte
 

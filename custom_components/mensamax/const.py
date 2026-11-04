@@ -8,4 +8,4 @@ CONF_FACILITY = "facility"
 CONF_PROJECT = "project"
 
 DEFAULT_NAME = "Mensa"
-UPDATE_INTERVAL = timedelta(hours=6)
+UPDATE_INTERVAL = timedelta(hours=2)
