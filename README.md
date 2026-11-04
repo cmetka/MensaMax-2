@@ -9,7 +9,7 @@ Inoffiziell und auf Basis der Website gebaut, kann also ausfallen, wenn MensaMax
 ## Installation
 
 1. HACS → Menü oben rechts → **Benutzerdefinierte Repositories**.
-2. `https://github.com/cmetka/MensaMax` eintragen, Typ **Integration**.
+2. `https://github.com/cmetka/MensaMax-2` eintragen, Typ **Integration**.
 3. **MensaMax Speiseplan** herunterladen und Home Assistant neu starten.
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen → MensaMax Speiseplan**.
 5. Name, Projekt, Einrichtung, Benutzername und Kennwort eintragen. Projekt und Einrichtung stehen im Portal links unter „Ihr Projekt“ und „Schule“.

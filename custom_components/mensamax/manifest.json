@@ -3,10 +3,10 @@
   "name": "MensaMax Speiseplan",
   "codeowners": ["@cmetka"],
   "config_flow": true,
-  "documentation": "https://github.com/cmetka/MensaMax",
+  "documentation": "https://github.com/cmetka/MensaMax-2",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/cmetka/MensaMax/issues",
+  "issue_tracker": "https://github.com/cmetka/MensaMax-2/issues",
   "requirements": ["beautifulsoup4>=4.12"],
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
