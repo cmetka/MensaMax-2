@@ -346,6 +346,21 @@ class WeeksTest(unittest.TestCase):
         self.assertEqual(portal.ordered, {("20261111", "7229")})
 
 
+class SchoolDaysTest(unittest.TestCase):
+    def test_first_start_to_last_end(self):
+        days = parser.school_days(
+            [
+                {"start": "2026-11-03T13:30:00+01:00", "end": "2026-11-03T15:30:00+01:00"},
+                {"start": "2026-11-03T07:50:00+01:00", "end": "2026-11-03T09:50:00+01:00"},
+                {"start": "2026-11-04T07:50:00+01:00", "end": "2026-11-04T12:20:00+01:00"},
+                {"start": "2026-11-05", "end": "2026-11-06"},
+            ]
+        )
+        self.assertEqual(days["2026-11-03"], {"von": "07:50", "bis": "15:30", "stunden": 7.67})
+        self.assertEqual(days["2026-11-04"]["stunden"], 4.5)
+        self.assertNotIn("2026-11-05", days)
+
+
 class KioskTest(unittest.TestCase):
     def test_last_seven_days_newest_first(self):
         portal = Portal()

@@ -17,6 +17,11 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_NAME, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    EntitySelector,
+    EntitySelectorConfig,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -29,8 +34,11 @@ from .api import CannotConnect, InvalidAccount, InvalidAuth, MensaMaxError, Plan
 from .const import (
     CONF_FACILITY,
     CONF_PROJECT,
+    DEFAULT_MIN_HOURS,
     DEFAULT_NAME,
     DOMAIN,
+    OPT_CALENDAR,
+    OPT_MIN_HOURS,
     OPT_NOTIFY,
     OPT_ORDER_USERS,
 )
@@ -172,6 +180,18 @@ class MensaMaxOptionsFlow(OptionsFlow):
                         OPT_NOTIFY, default=options.get(OPT_NOTIFY, [])
                     ): SelectSelector(
                         SelectSelectorConfig(options=services, multiple=True)
+                    ),
+                    vol.Optional(
+                        OPT_CALENDAR,
+                        description={"suggested_value": options.get(OPT_CALENDAR)},
+                    ): EntitySelector(EntitySelectorConfig(domain="calendar")),
+                    vol.Optional(
+                        OPT_MIN_HOURS,
+                        default=options.get(OPT_MIN_HOURS, DEFAULT_MIN_HOURS),
+                    ): NumberSelector(
+                        NumberSelectorConfig(
+                            min=0, max=12, step=0.5, mode=NumberSelectorMode.BOX
+                        )
                     ),
                 }
             ),

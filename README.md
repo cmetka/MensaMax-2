@@ -38,6 +38,10 @@ Am Wochenende zeigen die Wochentags-Sensoren schon die kommende Woche. `preis` i
 
 Die Daten werden alle zwei Stunden abgerufen, für die laufende und, soweit vorhanden, die kommende Woche.
 
+## Nur lange Schultage
+
+Unter **Konfigurieren** kannst du einen Stundenplan-Kalender und eine Stundenzahl wählen. Tage, an denen die Schule nicht länger dauert, melden dann den Zustand `Kurzer Schultag`, außer es liegt eine Bestellung vor. Dauer ist erster Beginn bis letztes Ende. Ist der Kalender nicht lesbar, wird nichts ausgeblendet.
+
 ## Bestellen
 
 Unter **Einstellungen → Geräte & Dienste → MensaMax Speiseplan → Konfigurieren** legst du fest, wer bestellen darf und wer benachrichtigt wird. Die Aktion `mensamax.bestellung` nimmt `tag`, `woche` (`diese`, `naechste`), `menue` und `aktion` (`bestellen`, `stornieren`, `umschalten`). Sie prüft den auslösenden Benutzer, lehnt Automationen ab und meldet nur dann Erfolg, wenn das Portal die Änderung danach anzeigt. Bestellungen kosten echtes Geld.

@@ -43,7 +43,9 @@
         "title": "MensaMax orders",
         "data": {
           "order_users": "May order",
-          "notify_services": "Notify"
+          "notify_services": "Notify",
+          "school_calendar": "Timetable calendar",
+          "min_school_hours": "Canteen day above (hours)"
         }
       }
     }

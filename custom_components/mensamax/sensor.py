@@ -20,6 +20,7 @@ from .coordinator import MensaMaxCoordinator
 
 NO_MENU = "Kein Angebot"
 NOT_ORDERED = "Nicht bestellt"
+SHORT_DAY = "Kurzer Schultag"
 MAX_STATE = 255
 WEEKDAYS = ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag")
 
@@ -283,12 +284,29 @@ class MensaWeekdaySensor(MensaSensor):
     @property
     def native_value(self) -> str:
         day = self._days.get(self._iso_day)
+        # Ein Tag mit Bestellung bleibt sichtbar, damit sie stornierbar bleibt.
+        if day and not day["ordered"] and self._is_short_day:
+            return SHORT_DAY
         return day["label"] if day and day_menus(day) else NO_MENU
+
+    @property
+    def _school(self) -> dict[str, Any] | None:
+        schedule = self.coordinator.data.get("schule")
+        return schedule.get(self._iso_day) if schedule else None
+
+    @property
+    def _is_short_day(self) -> bool:
+        data = self.coordinator.data
+        if data.get("schule") is None:
+            return False  # Ohne Stundenplan nichts ausblenden.
+        school = self._school
+        return not school or school["stunden"] <= data.get("min_stunden", 6)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         return {
             "datum": self._iso_day,
+            "schule": self._school,
             "menues": day_menus(self._days.get(self._iso_day)),
         }
 

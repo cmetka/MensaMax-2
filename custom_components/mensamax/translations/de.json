@@ -43,7 +43,9 @@
         "title": "MensaMax-Bestellungen",
         "data": {
           "order_users": "Dürfen bestellen",
-          "notify_services": "Benachrichtigen"
+          "notify_services": "Benachrichtigen",
+          "school_calendar": "Stundenplan-Kalender",
+          "min_school_hours": "Mensatag ab mehr als (Stunden)"
         }
       }
     }

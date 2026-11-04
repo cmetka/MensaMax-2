@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 import json
 import re
 from typing import Any
@@ -244,4 +244,25 @@ def parse_kiosk(text: str) -> dict[str, Any]:
     return {
         "total": (data["Summe"] - data["Gutschrift"]) / 100,
         "purchases": purchases,
+    }
+
+
+def school_days(events: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Fasst Stundenplan-Termine je Tag zusammen: erster Beginn bis letztes Ende."""
+    days: dict[str, dict[str, Any]] = {}
+    for event in events:
+        start, end = str(event.get("start", "")), str(event.get("end", ""))
+        if "T" not in start or "T" not in end:
+            continue  # Ganztägige Einträge sind keine Unterrichtszeit.
+        begin, finish = datetime.fromisoformat(start), datetime.fromisoformat(end)
+        day = days.setdefault(begin.date().isoformat(), {"von": begin, "bis": finish})
+        day["von"] = min(day["von"], begin)
+        day["bis"] = max(day["bis"], finish)
+    return {
+        iso: {
+            "von": day["von"].strftime("%H:%M"),
+            "bis": day["bis"].strftime("%H:%M"),
+            "stunden": round((day["bis"] - day["von"]).total_seconds() / 3600, 2),
+        }
+        for iso, day in days.items()
     }
