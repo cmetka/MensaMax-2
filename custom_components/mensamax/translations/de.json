@@ -3,18 +3,20 @@
     "step": {
       "user": {
         "title": "MensaMax-Speiseplan",
-        "description": "Trag die Daten ein, mit denen du dich auf app.mensamax.de anmeldest. Für jedes Konto legst du einen eigenen Eintrag an.",
+        "description": "Trag die Daten ein, mit denen du dich auf app.mensamax.de (oder einem anderen MensaMax-Server) anmeldest. Für jedes Konto legst du einen eigenen Eintrag an.",
         "data": {
           "name": "Name",
           "project": "Projekt",
           "facility": "Einrichtung",
           "username": "Benutzername",
-          "password": "Kennwort"
+          "password": "Kennwort",
+          "server": "Server"
         },
         "data_description": {
           "name": "Bestimmt die Namen der Sensoren, z. B. sensor.mensa_heute.",
           "project": "Steht im Portal unter „Ihr Projekt“.",
-          "facility": "Steht im Portal unter „Schule“."
+          "facility": "Steht im Portal unter „Schule“.",
+          "server": "Nur ändern, wenn du dich woanders anmeldest, z. B. https://mensaweb.de."
         }
       },
       "reauth_confirm": {
@@ -30,7 +32,8 @@
       "invalid_account": "Projekt, Einrichtung oder Benutzername wurden nicht angenommen.",
       "invalid_auth": "Die Anmeldung wurde abgelehnt. Prüf das Kennwort.",
       "plan_not_found": "Nach der Anmeldung kam kein Speiseplan zurück. Details: {details}",
-      "unknown": "Unerwarteter Fehler."
+      "unknown": "Unerwarteter Fehler.",
+      "invalid_server": "Die Serveradresse ist ungültig. Beispiel: https://mensaweb.de"
     },
     "abort": {
       "already_configured": "Dieses Konto ist bereits eingerichtet.",

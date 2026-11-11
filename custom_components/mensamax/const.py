@@ -6,6 +6,10 @@ DOMAIN = "mensamax"
 
 CONF_FACILITY = "facility"
 CONF_PROJECT = "project"
+# MensaMax betreibt mehrere Server (z. B. app.mensamax.de, mensaweb.de);
+# ein Konto ist nur auf seinem Server bekannt.
+CONF_SERVER = "server"
+DEFAULT_SERVER = "https://app.mensamax.de"
 
 # Ohne Eintrag darf niemand bestellen.
 OPT_ORDER_USERS = "order_users"

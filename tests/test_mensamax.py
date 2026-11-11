@@ -118,7 +118,10 @@ class Response:
 class Portal:
     """Spielt das Portal nach und merkt sich jede Anfrage."""
 
-    def __init__(self, good_account=True, password="geheim", session_works=True):
+    def __init__(
+        self, good_account=True, password="geheim", session_works=True, host="app.mensamax.de"
+    ):
+        self.host = host
         self.good_account = good_account
         self.password = password
         self.session_works = session_works
@@ -144,7 +147,7 @@ class Portal:
             self.kiosk_body = json.loads(data)
             return Response(KIOSK_REPLY, url)
         self.calls.append((method, url, dict(data or {})))
-        login_url = "https://app.mensamax.de/Login.aspx"
+        login_url = f"https://{self.host}/Login.aspx"
         if url == login_url:
             if method == "GET":
                 return Response(LOGIN_1, url)
@@ -152,7 +155,7 @@ class Portal:
                 return Response(LOGIN_2 if self.good_account else LOGIN_1, url)
             if data["tbxKennwort"] == self.password:
                 self.logged_in = True
-                return Response("<html>Start</html>", "https://app.mensamax.de/mensamax/index.aspx")
+                return Response("<html>Start</html>", f"https://{self.host}/mensamax/index.aspx")
             return Response(LOGIN_2, url)
         if not self.logged_in or not self.session_works:
             return Response(LOGIN_1, login_url)
@@ -175,7 +178,9 @@ class Portal:
 
 
 def fetch(portal, today=date(2026, 11, 4), password="geheim"):
-    client = api.MensaMaxClient(portal, "h2798", "Mensa-Gehrden", "kind", password)
+    client = api.MensaMaxClient(
+        portal, "h2798", "Mensa-Gehrden", "kind", password, f"https://{portal.host}"
+    )
     return asyncio.run(client.async_fetch(today))
 
 
@@ -461,6 +466,23 @@ class FetchTest(unittest.TestCase):
                     or url.endswith("/GKauf")
                 )
                 self.assertFalse(data.get("hdfMenue") or data.get("hdfID"))
+
+    def test_other_server(self):
+        """Alle Anfragen gehen an den eingestellten Server."""
+        portal = Portal(host="mensaweb.de")
+        self.assertIn("2026-11-04", fetch(portal)["days"])
+        self.assertEqual({urlparse(url).netloc for _, url, _ in portal.calls}, {"mensaweb.de"})
+
+
+class ServerTest(unittest.TestCase):
+    def test_normalize(self):
+        self.assertEqual(api.normalize_server(""), "https://app.mensamax.de")
+        self.assertEqual(api.normalize_server(None), "https://app.mensamax.de")
+        self.assertEqual(api.normalize_server("mensaweb.de"), "https://mensaweb.de")
+        self.assertEqual(api.normalize_server(" https://MensaWeb.de/ "), "https://mensaweb.de")
+        for bad in ("http://mensaweb.de", "https://mensaweb.de/Login.aspx", "https://"):
+            with self.assertRaises(ValueError):
+                api.normalize_server(bad)
 
 
 if __name__ == "__main__":

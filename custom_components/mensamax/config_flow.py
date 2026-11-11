@@ -30,12 +30,21 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
-from .api import CannotConnect, InvalidAccount, InvalidAuth, MensaMaxError, PlanNotFound
+from .api import (
+    CannotConnect,
+    InvalidAccount,
+    InvalidAuth,
+    MensaMaxError,
+    PlanNotFound,
+    normalize_server,
+)
 from .const import (
     CONF_FACILITY,
     CONF_PROJECT,
+    CONF_SERVER,
     DEFAULT_MIN_HOURS,
     DEFAULT_NAME,
+    DEFAULT_SERVER,
     DOMAIN,
     OPT_CALENDAR,
     OPT_MIN_HOURS,
@@ -86,7 +95,13 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
+            try:
+                server = normalize_server(user_input.get(CONF_SERVER))
+            except ValueError:
+                server = None
+                errors = {CONF_SERVER: "invalid_server"}
             data = {
+                CONF_SERVER: server,
                 CONF_PROJECT: user_input[CONF_PROJECT].strip(),
                 CONF_FACILITY: user_input[CONF_FACILITY].strip(),
                 CONF_USERNAME: user_input[CONF_USERNAME].strip(),
@@ -98,7 +113,8 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
                 ).lower()
             )
             self._abort_if_unique_id_configured()
-            errors = await self._async_test(data)
+            if not errors:
+                errors = await self._async_test(data)
             if not errors:
                 return self.async_create_entry(
                     title=user_input[CONF_NAME], data=data
@@ -111,6 +127,7 @@ class MensaMaxConfigFlow(ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_FACILITY): str,
                 vol.Required(CONF_USERNAME): str,
                 vol.Required(CONF_PASSWORD): _PASSWORD,
+                vol.Optional(CONF_SERVER, default=DEFAULT_SERVER): str,
             }
         )
         suggested = {
