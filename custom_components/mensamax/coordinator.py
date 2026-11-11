@@ -21,6 +21,8 @@ from .api import InvalidAccount, InvalidAuth, MensaMaxClient, MensaMaxError
 from .const import (
     CONF_FACILITY,
     CONF_PROJECT,
+    CONF_SERVER,
+    DEFAULT_SERVER,
     DEFAULT_MIN_HOURS,
     DOMAIN,
     OPT_CALENDAR,
@@ -48,6 +50,7 @@ async def _async_with_client(
             data[CONF_FACILITY],
             data[CONF_USERNAME],
             data[CONF_PASSWORD],
+            data.get(CONF_SERVER, DEFAULT_SERVER),
         )
         return await action(client)
     finally:

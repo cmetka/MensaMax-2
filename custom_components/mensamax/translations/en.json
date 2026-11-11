@@ -3,18 +3,20 @@
     "step": {
       "user": {
         "title": "MensaMax menu",
-        "description": "Enter the details you use to sign in at app.mensamax.de. Add one entry per account.",
+        "description": "Enter the details you use to sign in at app.mensamax.de (or another MensaMax server). Add one entry per account.",
         "data": {
           "name": "Name",
           "project": "Project",
           "facility": "Facility",
           "username": "Username",
-          "password": "Password"
+          "password": "Password",
+          "server": "Server"
         },
         "data_description": {
           "name": "Determines the sensor names, e.g. sensor.mensa_heute.",
           "project": "Shown in the portal as 'Ihr Projekt'.",
-          "facility": "Shown in the portal as 'Schule'."
+          "facility": "Shown in the portal as 'Schule'.",
+          "server": "Only change this if you sign in elsewhere, e.g. https://mensaweb.de."
         }
       },
       "reauth_confirm": {
@@ -30,7 +32,8 @@
       "invalid_account": "Project, facility or username was not accepted.",
       "invalid_auth": "The sign-in was rejected. Check the password.",
       "plan_not_found": "No menu was returned after signing in. Details: {details}",
-      "unknown": "Unexpected error."
+      "unknown": "Unexpected error.",
+      "invalid_server": "The server address is not valid. Example: https://mensaweb.de"
     },
     "abort": {
       "already_configured": "This account is already configured.",

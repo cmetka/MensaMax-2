@@ -1,6 +1,6 @@
 # MensaMax Speiseplan für Home Assistant
 
-Meldet sich mit deinem Konto bei `app.mensamax.de` an und zeigt Speiseplan, Bestellstatus, Kontostand und Kioskkäufe als Sensoren.
+Meldet sich mit deinem Konto bei `app.mensamax.de` (oder einem anderen MensaMax-Server wie `mensaweb.de`) an und zeigt Speiseplan, Bestellstatus, Kontostand und Kioskkäufe als Sensoren.
 
 Bestellen und Stornieren ist möglich, aber nur für Benutzer, die du freigibst. Ohne Freigabe liest die Integration nur.
 
@@ -12,7 +12,7 @@ Inoffiziell und auf Basis der Website gebaut, kann also ausfallen, wenn MensaMax
 2. `https://github.com/cmetka/MensaMax-2` eintragen, Typ **Integration**.
 3. **MensaMax Speiseplan** herunterladen und Home Assistant neu starten.
 4. **Einstellungen → Geräte & Dienste → Integration hinzufügen → MensaMax Speiseplan**.
-5. Name, Projekt, Einrichtung, Benutzername und Kennwort eintragen. Projekt und Einrichtung stehen im Portal links unter „Ihr Projekt“ und „Schule“.
+5. Name, Projekt, Einrichtung, Benutzername und Kennwort eintragen. Projekt und Einrichtung stehen im Portal links unter „Ihr Projekt“ und „Schule“. Meldest du dich nicht auf `app.mensamax.de` an, sondern etwa auf `mensaweb.de`, trägst du diese Adresse unter **Server** ein.
 
 Für jedes weitere Konto wiederholst du Schritt 4 und 5 mit einem anderen Namen.
 

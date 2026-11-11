@@ -15,11 +15,12 @@ from urllib.parse import urlsplit
 
 import aiohttp
 
+from .const import DEFAULT_SERVER
 from .parser import ParsedPage, parse_kiosk, parse_page
 
 _LOGGER = logging.getLogger(__name__)
 
-BASE_URL = "https://app.mensamax.de"
+BASE_URL = DEFAULT_SERVER
 LOGIN_PATH = "/Login.aspx"
 PLAN_PATH = "/mensamax/Essenbestellung/bestellen-stornieren/PlanForm.aspx"
 KIOSK_PAGE = "/mensamax/MeineDaten/MeinKioskkaufForm.aspx"
@@ -59,6 +60,20 @@ def _describe(stage: str, page: ParsedPage, url: str) -> str:
     return f"{stage}: {urlsplit(url).path}, Titel '{page.title[:40]}', Felder {fields}"
 
 
+def normalize_server(value: str | None) -> str:
+    """Macht aus "mensaweb.de" oder "https://mensaweb.de/" eine Basisadresse."""
+    value = (value or "").strip().rstrip("/")
+    if not value:
+        return DEFAULT_SERVER
+    if "://" not in value:
+        value = f"https://{value}"
+    parts = urlsplit(value)
+    host = (parts.hostname or "").lower()
+    if parts.scheme != "https" or "." not in host or parts.path or parts.query:
+        raise ValueError(value)
+    return f"https://{host}"
+
+
 def _monday(day: date) -> date:
     return day - timedelta(days=day.weekday())
 
@@ -73,8 +88,10 @@ class MensaMaxClient:
         facility: str,
         username: str,
         password: str,
+        base_url: str = DEFAULT_SERVER,
     ) -> None:
         self._session = session
+        self._base_url = base_url
         self._project = project
         self._facility = facility
         self._username = username
@@ -91,14 +108,14 @@ class MensaMaxClient:
         extra_headers: dict[str, str] | None = None,
     ) -> tuple[ParsedPage, str]:
         headers = {
-            "Referer": f"{BASE_URL}{referer}",
-            "Origin": BASE_URL,
+            "Referer": f"{self._base_url}{referer}",
+            "Origin": self._base_url,
             **(extra_headers or {}),
         }
         try:
             async with self._session.request(
                 method,
-                f"{BASE_URL}{path}",
+                f"{self._base_url}{path}",
                 data=data,
                 headers=headers,
                 timeout=_TIMEOUT,
@@ -276,12 +293,12 @@ class MensaMaxClient:
         try:
             async with self._session.request(
                 "POST",
-                f"{BASE_URL}{KIOSK_PAGE}/GKauf",
+                f"{self._base_url}{KIOSK_PAGE}/GKauf",
                 data=body,
                 headers={
                     "Content-Type": "application/json; charset=utf-8",
-                    "Referer": f"{BASE_URL}{KIOSK_PAGE}",
-                    "Origin": BASE_URL,
+                    "Referer": f"{self._base_url}{KIOSK_PAGE}",
+                    "Origin": self._base_url,
                 },
                 timeout=_TIMEOUT,
             ) as response:
